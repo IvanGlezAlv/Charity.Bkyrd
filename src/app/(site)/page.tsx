@@ -162,7 +162,7 @@ export default async function HomePage() {
 
         {episodes.length > 0 && (
           <Section title="La Charity Endurance Team" eyebrow="Podcast">
-            <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <ul className="-mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-4" aria-label="Episodios">
               {episodes.map((ep) => {
                 const cover = ep.cover_path?.startsWith("/") ? ep.cover_path : storageUrl(ep.cover_path);
                 const body = (
@@ -171,17 +171,23 @@ export default async function HomePage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={cover} alt="" className="aspect-square w-full border-b-2 border-ink bg-white object-contain p-2" />
                     )}
-                    <span className="block p-3">
+                    <span className="flex flex-1 flex-col p-3">
                       {ep.episode_number && <span className="eyebrow block">Ep. {String(ep.episode_number).padStart(2, "0")}</span>}
                       <span className="display block text-2xl">{ep.title}</span>
                       {ep.description && <span className="mt-1 block text-sm text-ink-2">{ep.description}</span>}
+                      <span className={`eyebrow mt-auto block pt-3 ${ep.listen_url ? "" : "text-ink-3"}`}>
+                        {ep.listen_url ? "Escuchar ↗" : "Próximamente"}
+                      </span>
                     </span>
                   </>
                 );
                 return (
-                  <li key={ep.id} className="border-2 border-ink bg-paper">
+                  <li
+                    key={ep.id}
+                    className="flex w-[calc((100%-1rem)/2.2)] shrink-0 snap-start flex-col border-2 border-ink bg-paper sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]"
+                  >
                     {ep.listen_url ? (
-                      <a href={ep.listen_url} target="_blank" rel="noopener noreferrer" className="block hover:bg-paper-2" aria-label={`Escuchar ${ep.title}`}>{body}</a>
+                      <a href={ep.listen_url} target="_blank" rel="noopener noreferrer" className="flex flex-1 flex-col hover:bg-paper-2" aria-label={`Escuchar ${ep.title}`}>{body}</a>
                     ) : (
                       body
                     )}
@@ -189,8 +195,16 @@ export default async function HomePage() {
                 );
               })}
             </ul>
+            {episodes.length > 4 && <p className="eyebrow text-ink-3">Desliza para ver más →</p>}
           </Section>
         )}
+
+        <Section title="El cartel" eyebrow={race.event_date ? formatDate(race.event_date, race.timezone) : undefined}>
+          <a href="/brand/flyer.webp" target="_blank" rel="noopener noreferrer" className="mx-auto block max-w-md border-2 border-ink">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/flyer.webp" alt="Cartel de La Charity Bkyard Ultra: loop de 6ish km, last man standing, Las Riberas, 28.11.2026" className="w-full" />
+          </a>
+        </Section>
 
         {visibleSponsors.length > 0 && (
           <Section title="Patrocinadores">
