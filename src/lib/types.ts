@@ -88,6 +88,7 @@ export interface Distance {
   route_geojson: { type: "LineString"; coordinates: [number, number][] } | null;
   elevation_profile: ElevationPoint[] | null;
   gpx_stats: GpxStats | null;
+  route_image_path: string | null;
   sort_order: number;
   is_published: boolean;
 }

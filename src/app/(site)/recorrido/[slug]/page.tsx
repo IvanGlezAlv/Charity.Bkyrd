@@ -44,7 +44,9 @@ export default async function CoursePage(props: PageProps<"/recorrido/[slug]">) 
     ...cps.filter((c) => c.latitude != null && c.longitude != null)
       .map((c) => ({ lat: Number(c.latitude), lng: Number(c.longitude), label: c.name, kind: c.kind === "aid_station" ? "aid_station" : "checkpoint", detail: c.km_mark != null ? `km ${c.km_mark}` : undefined })),
   ];
-  const gpxUrl = storageUrl(d.gpx_path, { download: d.gpx_filename ?? `${d.slug}.gpx` });
+  const gpxName = d.gpx_filename ?? `${d.slug}.gpx`;
+  const gpxUrl = storageUrl(d.gpx_path, { download: gpxName });
+  const routeImage = storageUrl(d.route_image_path);
   const backyard = race.format === "backyard";
 
   return (
@@ -53,7 +55,7 @@ export default async function CoursePage(props: PageProps<"/recorrido/[slug]">) 
       <div className="mt-2 flex flex-wrap items-end justify-between gap-6">
         <h1 className="display text-6xl sm:text-8xl">{d.name}</h1>
         {gpxUrl ? (
-          <a href={gpxUrl} className="btn min-h-14 px-6 text-base">Descargar GPX ↓</a>
+          <a href={gpxUrl} download={gpxName} className="btn min-h-14 px-6 text-base">Descargar GPX ↓</a>
         ) : (
           <p className="eyebrow border border-ink px-3 py-2">GPX disponible pronto</p>
         )}
@@ -79,6 +81,13 @@ export default async function CoursePage(props: PageProps<"/recorrido/[slug]">) 
           </p>
         )}
       </div>
+
+      {routeImage && (
+        <figure className="mt-10 max-w-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={routeImage} alt={`Ruta ${d.name}`} className="w-full border-2 border-ink" loading="lazy" />
+        </figure>
+      )}
 
       {d.elevation_profile && d.elevation_profile.length > 1 && (
         <Section title="Perfil" className="mt-10">

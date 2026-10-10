@@ -23,7 +23,7 @@ export function QuickLinks({ race, distances }: { race: Race; distances: Distanc
         </span>
       </Link>
       {gpx.length === 1 ? (
-        <a href={storageUrl(gpx[0].gpx_path, { download: gpx[0].gpx_filename ?? `${gpx[0].slug}.gpx` })!} className={tile}>
+        <a download href={storageUrl(gpx[0].gpx_path, { download: gpx[0].gpx_filename ?? `${gpx[0].slug}.gpx` })!} className={tile}>
           <span className="eyebrow">03 · Recorrido</span>
           <span className="display text-4xl">Descargar GPX ↓</span>
           <span className="text-sm opacity-80">{gpx[0].name}{gpx[0].distance_km ? ` · ${gpx[0].distance_km} km` : ""}</span>

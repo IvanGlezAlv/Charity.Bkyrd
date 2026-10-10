@@ -29,7 +29,7 @@ export default async function CoursesPage() {
               </Link>
               <div className="flex flex-wrap gap-2">
                 <Link href={`/recorrido/${d.slug}`} className="btn btn-ghost">Ver mapa</Link>
-                {d.gpx_path && <a className="btn" href={storageUrl(d.gpx_path, { download: d.gpx_filename ?? `${d.slug}.gpx` })!}>Descargar GPX</a>}
+                {d.gpx_path && <a className="btn" download href={storageUrl(d.gpx_path, { download: d.gpx_filename ?? `${d.slug}.gpx` })!}>Descargar GPX</a>}
               </div>
             </li>
           ))}

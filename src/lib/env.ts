@@ -14,9 +14,12 @@ export const isSupabaseConfigured = Boolean(env.supabaseUrl && env.supabaseAnonK
 
 export const STORAGE_BUCKET = "race-assets";
 
-/** Public URL of a file in the race-assets bucket. */
+/** Public URL of a file in the race-assets bucket, or of a site file when the path starts with "/". */
 export function storageUrl(path: string | null | undefined, opts: { download?: string } = {}): string | null {
-  if (!path || !env.supabaseUrl) return null;
+  if (!path) return null;
+  // A leading slash means a file shipped with the site in /public.
+  if (path.startsWith("/")) return path;
+  if (!env.supabaseUrl) return null;
   const encoded = path.split("/").map(encodeURIComponent).join("/");
   const url = `${env.supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${encoded}`;
   return opts.download ? `${url}?download=${encodeURIComponent(opts.download)}` : url;
