@@ -12,9 +12,12 @@ declare
   v_dist uuid;
   v_venue uuid;
 begin
-  insert into public.races (slug, name, tagline, format, timezone, event_date, is_published, registration_note,
+  insert into public.races (slug, name, tagline, description, format, timezone, event_date, is_published, registration_note,
                             venue_name, social_links, ranking_basis)
   values ('charity-bkyrd-vol-ii', 'La Charity Bckyrd Ultra Vol. II', 'Last one standing',
+          $desc$**La Charity Backyard Ultra** es una carrera con formato **"last man standing"**, donde los participantes deberán completar un circuito **(loop) de 6.7 km** dentro de una hora. Al comenzar la siguiente hora, se da una nueva salida para comenzar el siguiente loop.
+
+El objetivo es sencillo: seguir completando vueltas hasta que solo quede un corredor en pie. **Cada participante decide cuándo termina** su reto, pero solo habrá un ***"last man standing"***.$desc$,
           'backyard', 'America/Hermosillo', date '2026-11-28', true,
           'Inscripciones cerradas: cupo lleno.',
           'Las Riberas',
@@ -41,10 +44,12 @@ begin
   (v_race, 'info', 'formato', 'Formato backyard',
    E'- Primera salida: sábado 28 de noviembre de 2026, 4:00 PM.\n- Una vuelta de 6.7 km cada hora.\n- Termina tu vuelta antes de la siguiente salida para seguir en carrera.', 0);
 
-  insert into public.podcast_episodes (race_id, episode_number, title, cover_path, sort_order) values
-  (v_race, 4, 'El Territorio', '/brand/ep04-el-territorio.webp', 0),
-  (v_race, 5, 'La Resistencia', '/brand/ep05-la-resistencia.webp', 1),
-  (v_race, 6, 'El Combustible', '/brand/ep06-el-combustible.webp', 2),
-  (v_race, 7, 'El Estilo', '/brand/ep07-el-estilo.webp', 3);
+  insert into public.podcast_episodes (race_id, episode_number, title, cover_path, listen_url, sort_order) values
+  (v_race, 1, 'La Presentación', '/brand/jackalope.webp', 'https://www.youtube.com/watch?v=Lk1j_AllQ1o', 1),
+  (v_race, 2, '¿Qué se necesita para correr largas distancias?', '/brand/rider.webp', 'https://www.youtube.com/watch?v=l6dAe5Hjtu8', 2),
+  (v_race, 4, 'El Territorio', '/brand/ep04-el-territorio.webp', 'https://www.youtube.com/watch?v=kjrv1w0ucDU', 3),
+  (v_race, 5, 'La Resistencia', '/brand/ep05-la-resistencia.webp', 'https://www.youtube.com/watch?v=0nevhT9_cP4', 4),
+  (v_race, 6, 'El Combustible', '/brand/ep06-el-combustible.webp', null, 5),
+  (v_race, 7, 'El Estilo', '/brand/ep07-el-estilo.webp', null, 6);
 
 end $$;
