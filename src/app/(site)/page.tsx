@@ -56,8 +56,14 @@ export default async function HomePage() {
           </div>
         </div>
         {showCountdown && (
-          <div className="pb-8 md:pb-12">
-            <RaceCountdown startIso={start} intervalMinutes={race.format === "backyard" ? firstDistance?.loop_interval_minutes ?? 60 : null} />
+          <div className="flex items-center gap-2 pb-8 sm:gap-6 md:pb-12">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/portrait-cap.webp" alt="" className="w-[17%] max-w-44 shrink-0 mix-blend-multiply" />
+            <div className="min-w-0 flex-1">
+              <RaceCountdown startIso={start} intervalMinutes={race.format === "backyard" ? firstDistance?.loop_interval_minutes ?? 60 : null} />
+            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/portrait-cap.webp" alt="" className="w-[17%] max-w-44 shrink-0 mix-blend-multiply" />
           </div>
         )}
       </Container>

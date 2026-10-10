@@ -29,6 +29,8 @@ export default async function ManualPage() {
 
   return (
     <Container className="pt-10">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/brand/respect-my-authority.webp" alt="La Charity: Respect my authority" className="mx-auto mb-8 w-full max-w-xl mix-blend-multiply" />
       <div className="flex flex-wrap items-end justify-between gap-6 border-b-2 border-ink pb-6">
         <div>
           <p className="eyebrow">Manual del corredor</p>
