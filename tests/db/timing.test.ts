@@ -390,6 +390,25 @@ d("timing and results", () => {
         asUser(db, timer, (q) => q("select public.import_participants($1, $2::jsonb)", [race.raceId, JSON.stringify(rows)])),
       ).rejects.toThrow(/Not authorized/);
     });
+
+    it("keeps the file order as sign-up order", async () => {
+      const race = await createRace(db, { format: "backyard", runners: [] });
+      const names = ["Zeta", "Alfa", "Mu", "Beta"];
+      await asUser(
+        db,
+        organizer,
+        (q) => q("select public.import_participants($1, $2::jsonb, 'create_only')", [
+          race.raceId,
+          JSON.stringify(names.map((n) => ({ first_name: n, last_name: "X", distance_slug: "main" }))),
+        ]),
+        { commit: true },
+      );
+      const { rows } = await db.admin.query(
+        "select p.first_name from public.registrations r join public.participants p on p.id = r.participant_id where r.race_id = $1 order by r.signup_seq",
+        [race.raceId],
+      );
+      expect(rows.map((r) => r.first_name)).toEqual(names);
+    });
   });
 
   it("race overview counts come from the database", async () => {

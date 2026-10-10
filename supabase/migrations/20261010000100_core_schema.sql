@@ -336,7 +336,10 @@ create table public.participants (
   email text,
   phone text,
   birth_date date,
+  -- Age as reported at registration (used when no birth date was collected).
+  age int check (age between 0 and 120),
   gender text check (gender in ('F', 'M', 'X')),
+  shirt_size text check (length(shirt_size) <= 10),
   nationality text,
   city text,
   club text,
@@ -366,6 +369,9 @@ create table public.registrations (
   status_changed_by uuid references auth.users (id) on delete set null,
   -- Runner agreed to appear in public lists and results.
   public_listing boolean not null default true,
+  -- Sign-up order: increases with every insert, and imports insert rows in
+  -- file order, so it preserves the order of the organizer's list.
+  signup_seq bigint generated always as identity,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (race_id, id),

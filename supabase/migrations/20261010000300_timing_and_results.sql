@@ -827,7 +827,7 @@ begin
   end if;
   perform set_config('app.audit_reason', 'Participant import (' || p_strategy || ')', true);
 
-  for v_row in select value from jsonb_array_elements(p_rows) loop
+  for v_row in select e.value from jsonb_array_elements(p_rows) with ordinality as e(value, n) order by e.n loop
     v_idx := v_idx + 1;
     v_bib := nullif(trim(v_row ->> 'bib'), '');
 
@@ -876,6 +876,8 @@ begin
         email = coalesce(nullif(trim(v_row ->> 'email'), ''), p.email),
         phone = coalesce(nullif(trim(v_row ->> 'phone'), ''), p.phone),
         birth_date = coalesce(nullif(v_row ->> 'birth_date', '')::date, p.birth_date),
+        age = coalesce(nullif(v_row ->> 'age', '')::int, p.age),
+        shirt_size = coalesce(nullif(trim(v_row ->> 'shirt_size'), ''), p.shirt_size),
         gender = coalesce(nullif(v_row ->> 'gender', ''), p.gender),
         nationality = coalesce(nullif(trim(v_row ->> 'nationality'), ''), p.nationality),
         city = coalesce(nullif(trim(v_row ->> 'city'), ''), p.city),
@@ -899,10 +901,11 @@ begin
       end if;
       v_updated := v_updated + 1;
     else
-      insert into public.participants (race_id, first_name, last_name, email, phone, birth_date, gender, nationality,
+      insert into public.participants (race_id, first_name, last_name, email, phone, birth_date, age, shirt_size, gender, nationality,
         city, club, emergency_contact_name, emergency_contact_phone, medical_notes, external_ref)
       values (p_race_id, trim(v_row ->> 'first_name'), coalesce(trim(v_row ->> 'last_name'), ''),
         nullif(trim(v_row ->> 'email'), ''), nullif(trim(v_row ->> 'phone'), ''), nullif(v_row ->> 'birth_date', '')::date,
+        nullif(v_row ->> 'age', '')::int, nullif(trim(v_row ->> 'shirt_size'), ''),
         nullif(v_row ->> 'gender', ''), nullif(trim(v_row ->> 'nationality'), ''), nullif(trim(v_row ->> 'city'), ''),
         nullif(trim(v_row ->> 'club'), ''), nullif(trim(v_row ->> 'emergency_contact_name'), ''),
         nullif(trim(v_row ->> 'emergency_contact_phone'), ''), nullif(trim(v_row ->> 'medical_notes'), ''),
