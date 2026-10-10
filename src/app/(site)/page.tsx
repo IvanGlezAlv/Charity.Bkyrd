@@ -200,10 +200,17 @@ export default async function HomePage() {
         )}
 
         <Section title="El cartel" eyebrow={race.event_date ? formatDate(race.event_date, race.timezone) : undefined}>
-          <a href="/brand/flyer.webp" target="_blank" rel="noopener noreferrer" className="mx-auto block max-w-md border-2 border-ink">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/flyer.webp" alt="Cartel de La Charity Bkyard Ultra: loop de 6ish km, last man standing, Las Riberas, 28.11.2026" className="w-full" />
-          </a>
+          <div className="grid items-start gap-6 md:grid-cols-2">
+            {[
+              { src: "/brand/poster-vol-ii.webp", alt: "Cartel de La Charity Bckyrd Ultra Vol. II: sábado 28.11.2026, inicio 4:00 PM, @ Las Riberas" },
+              { src: "/brand/flyer.webp", alt: "Cartel de La Charity Bkyard Ultra: loop de 6ish km, last man standing, Las Riberas, 28.11.2026" },
+            ].map((f) => (
+              <a key={f.src} href={f.src} target="_blank" rel="noopener noreferrer" className="block border-2 border-ink">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={f.src} alt={f.alt} className="w-full" />
+              </a>
+            ))}
+          </div>
         </Section>
 
         {visibleSponsors.length > 0 && (

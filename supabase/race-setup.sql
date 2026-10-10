@@ -12,9 +12,12 @@ declare
   v_dist uuid;
   v_venue uuid;
 begin
-  insert into public.races (slug, name, tagline, format, timezone, event_date, is_published, registration_note,
+  insert into public.races (slug, name, tagline, description, format, timezone, event_date, is_published, registration_note,
                             venue_name, social_links, ranking_basis)
   values ('charity-bkyrd-vol-ii', 'La Charity Bckyrd Ultra Vol. II', 'Last one standing',
+          $desc$**La Charity Backyard Ultra** es una carrera con formato **"last man standing"**, donde los participantes deberán completar un circuito **(loop) de 6.7 km** dentro de una hora. Al comenzar la siguiente hora, se da una nueva salida para comenzar el siguiente loop.
+
+El objetivo es sencillo: seguir completando vueltas hasta que solo quede un corredor en pie. **Cada participante decide cuándo termina** su reto, pero solo habrá un ***"last man standing"***.$desc$,
           'backyard', 'America/Hermosillo', date '2026-11-28', true,
           'Inscripciones cerradas: cupo lleno.',
           'Las Riberas',
