@@ -11,6 +11,7 @@ import { Container, Section } from "@/components/ui/Section";
 import { Markdown } from "@/components/ui/Markdown";
 import { Announcements } from "@/components/site/Announcements";
 import { QuickLinks } from "@/components/site/QuickLinks";
+import { RaceCountdown } from "@/components/site/RaceCountdown";
 
 export default async function HomePage() {
   const race = await getActiveRace();
@@ -25,6 +26,8 @@ export default async function HomePage() {
   ]);
   const publicDistances = distances.filter((d) => d.is_published);
   const start = firstStart(publicDistances);
+  const firstDistance = publicDistances.find((d) => d.start_time === start);
+  const showCountdown = start && (race.event_status === "upcoming" || race.event_status === "race_day");
   const live = liveAnnouncements(announcements);
   const showResults = race.results_publication !== "hidden";
   const results = showResults ? (await getPublicResults(race.id)).rows : [];
@@ -52,6 +55,11 @@ export default async function HomePage() {
             <p className="eyebrow inline-flex w-fit border-2 border-ink px-3 py-2">Inscripciones cerradas</p>
           </div>
         </div>
+        {showCountdown && (
+          <div className="pb-8 md:pb-12">
+            <RaceCountdown startIso={start} intervalMinutes={race.format === "backyard" ? firstDistance?.loop_interval_minutes ?? 60 : null} />
+          </div>
+        )}
       </Container>
 
       <div className="relative border-y-2 border-ink">
