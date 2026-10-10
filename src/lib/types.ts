@@ -277,3 +277,37 @@ export interface TimingEvent {
   void_reason: string | null;
   replaced_by: string | null;
 }
+
+/** Personal data: organizers and admins only (RLS). Never sent to public pages. */
+export interface Participant {
+  id: string;
+  race_id: string;
+  first_name: string;
+  last_name: string;
+  email: string | null;
+  phone: string | null;
+  birth_date: string | null;
+  age: number | null;
+  gender: "F" | "M" | "X" | null;
+  shirt_size: string | null;
+  nationality: string | null;
+  city: string | null;
+  club: string | null;
+  emergency_contact_name: string | null;
+  emergency_contact_phone: string | null;
+  medical_notes: string | null;
+  internal_notes: string | null;
+  external_ref: string | null;
+}
+
+export interface AdminEntry {
+  id: string;
+  bib: string | null;
+  status: ParticipationStatus;
+  status_reason: string | null;
+  public_listing: boolean;
+  signup_seq: number;
+  distance_id: string;
+  category_id: string | null;
+  participant: Participant;
+}
