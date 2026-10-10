@@ -103,6 +103,8 @@ create table public.races (
   hero_image_path text,
   contact_email text,
   contact_phone text,
+  -- [{ "label": "Instagram", "url": "https://instagram.com/..." }]
+  social_links jsonb not null default '[]'::jsonb check (jsonb_typeof(social_links) = 'array'),
   -- 'gun': elapsed from the distance's official start. 'net': from the runner's own start event.
   ranking_basis text not null default 'gun' check (ranking_basis in ('gun', 'net')),
   manual_version text,

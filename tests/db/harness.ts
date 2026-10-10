@@ -13,7 +13,7 @@ import { Client } from "pg";
  */
 export const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL;
 
-const root = path.resolve(__dirname, "../..");
+const root = path.resolve(import.meta.dirname, "../..");
 
 export interface TestDb {
   admin: Client;
