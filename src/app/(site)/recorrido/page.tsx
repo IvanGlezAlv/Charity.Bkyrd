@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getActiveRace, getDistances } from "@/lib/data";
 import { storageUrl } from "@/lib/env";
 import { distanceSummary } from "@/lib/race";
@@ -13,6 +14,8 @@ export default async function CoursesPage() {
   const race = await getActiveRace();
   if (!race) return null; // the layout shows setup instructions instead
   const distances = (await getDistances(race.id)).filter((d) => d.is_published);
+  // With a single course (the Backyard loop) there is nothing to choose: go straight to its map.
+  if (distances.length === 1) redirect(`/recorrido/${distances[0].slug}`);
   return (
     <Container className="pt-10">
       <p className="eyebrow">Recorrido</p>
