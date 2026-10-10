@@ -15,7 +15,8 @@ const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) 
 
 export default async function ParticipantsPage({ searchParams }: PageProps<"/admin/participantes">) {
   await requirePageRole("organizer");
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const sp = await searchParams;
   const filter = { q: one(sp.q), status: one(sp.estado), distance: one(sp.distancia), missing: one(sp.faltante) };
   const supabase = await createClient();
@@ -51,12 +52,10 @@ export default async function ParticipantsPage({ searchParams }: PageProps<"/adm
         </EmptyState>
       ) : (
         <>
-          {withoutBib > 0 && (
-            <section className="mb-8 border-2 border-ink p-4">
-              <h2 className="eyebrow mb-3">Asignar dorsales a {withoutBib} corredores sin número</h2>
-              <AssignBibsForm />
-            </section>
-          )}
+          <section className="mb-8 border-2 border-ink p-4">
+            <h2 className="eyebrow mb-3">{withoutBib > 0 ? `Asignar dorsales a ${withoutBib} corredores sin número` : "Todos los corredores tienen dorsal"}</h2>
+            <AssignBibsForm />
+          </section>
 
           <form className="mb-4 grid gap-3 sm:grid-cols-[1fr_auto_auto_auto_auto]" role="search">
             <input className="field" type="search" name="q" defaultValue={filter.q} placeholder="Buscar por nombre, dorsal, correo, teléfono…" aria-label="Buscar" />

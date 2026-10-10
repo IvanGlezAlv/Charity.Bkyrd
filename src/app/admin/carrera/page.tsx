@@ -10,7 +10,8 @@ export const metadata = { title: "Carrera y distancias" };
 
 export default async function RaceConfigPage() {
   await requirePageRole("organizer");
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   return (
     <AdminPage>
       <PageHeader

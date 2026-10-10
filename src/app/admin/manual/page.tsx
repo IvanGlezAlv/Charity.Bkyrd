@@ -11,7 +11,8 @@ export const metadata = { title: "Manual del corredor" };
 
 export default async function ManualAdminPage() {
   await requirePageRole("organizer");
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const docs = (await getDocuments(race.id)).filter((d) => d.kind === "manual_pdf");
   return (
     <AdminPage>

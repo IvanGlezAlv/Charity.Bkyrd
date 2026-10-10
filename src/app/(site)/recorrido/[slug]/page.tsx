@@ -29,7 +29,8 @@ function Stat({ label, value, note }: { label: string; value: string; note?: str
 
 export default async function CoursePage(props: PageProps<"/recorrido/[slug]">) {
   const { slug } = await props.params;
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const [distances, checkpoints, locations] = await Promise.all([getDistances(race.id), getCheckpoints(race.id), getLocations(race.id)]);
   const d = distances.find((x) => x.slug === slug && x.is_published);
   if (!d) notFound();

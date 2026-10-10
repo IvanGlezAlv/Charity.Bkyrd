@@ -19,7 +19,8 @@ interface Entrant {
 
 /** Public lookup: only the columns exposed by the public_entrants view. */
 export default async function EntrantsPage(props: PageProps<"/corredores">) {
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const sp = await props.searchParams;
   const q = (typeof sp.q === "string" ? sp.q : "").trim().slice(0, 60);
   const supabase = await createClient();

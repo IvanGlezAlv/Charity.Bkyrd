@@ -12,7 +12,8 @@ import { LocationCard } from "@/components/site/LocationCard";
 export const metadata: Metadata = { title: "Información" };
 
 export default async function InfoPage() {
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const [locations, schedule, distances, checkpoints, sections, faqs, contacts] = await Promise.all([
     getLocations(race.id), getSchedule(race.id), getDistances(race.id), getCheckpoints(race.id),
     getSections(race.id, "info"), getFaqs(race.id), getContacts(race.id),

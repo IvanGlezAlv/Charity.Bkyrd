@@ -8,7 +8,8 @@ import { ResultsBoard } from "@/components/results/ResultsBoard";
 export const metadata: Metadata = { title: "Resultados" };
 
 export default async function ResultsPage() {
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const [distances, categories] = await Promise.all([getDistances(race.id), getCategories(race.id)]);
 
   return (

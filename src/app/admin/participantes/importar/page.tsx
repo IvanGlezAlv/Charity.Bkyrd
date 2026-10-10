@@ -8,7 +8,8 @@ export const metadata = { title: "Importar corredores" };
 
 export default async function ImportParticipantsPage() {
   await requirePageRole("organizer");
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const distances = await getDistances(race.id);
   return (
     <AdminPage wide>

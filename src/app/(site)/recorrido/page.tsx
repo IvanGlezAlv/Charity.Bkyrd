@@ -10,7 +10,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 export const metadata: Metadata = { title: "Recorrido" };
 
 export default async function CoursesPage() {
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const distances = (await getDistances(race.id)).filter((d) => d.is_published);
   return (
     <Container className="pt-10">

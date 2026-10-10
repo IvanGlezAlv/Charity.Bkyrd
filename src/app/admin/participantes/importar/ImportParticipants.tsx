@@ -6,7 +6,7 @@ import { Feedback } from "@/components/admin/Feedback";
 import type { ParticipantPreview } from "@/lib/import/participants";
 import { commitParticipantImport, previewParticipantImport } from "../../participantes-actions";
 
-const MATCH_LABEL = { external_ref: "referencia", bib: "dorsal", name_birth_date: "nombre y nacimiento" } as const;
+const MATCH_LABEL = { external_ref: "referencia", bib: "dorsal", name_birth_date: "nombre y nacimiento", name_email: "nombre y correo" } as const;
 
 export function ImportParticipants() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -116,7 +116,7 @@ export function ImportParticipants() {
             <fieldset className="space-y-3 border-2 border-ink p-4">
               <legend className="eyebrow px-1">Importar</legend>
               <p className="text-sm">
-                Se importarán {importable} filas.{data.summary.errors > 0 && ` Las ${data.summary.errors} filas con errores no se importarán.`} Los avisos
+                Se importarán {importable} {importable === 1 ? "fila" : "filas"}.{data.summary.errors > 0 && (data.summary.errors === 1 ? " La fila con errores no se importará." : ` Las ${data.summary.errors} filas con errores no se importarán.`)} Los avisos
                 no bloquean: el dato inválido se deja vacío para corregirlo después.
               </p>
               <label className="flex items-start gap-2">

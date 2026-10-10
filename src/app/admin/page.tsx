@@ -27,7 +27,8 @@ interface OverviewRow {
 
 export default async function AdminHome(props: PageProps<"/admin">) {
   const session = await requirePageRole();
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const sp = await props.searchParams;
   const supabase = await createClient();
   const [{ data: overview, error }, distances, { data: flagged }] = await Promise.all([

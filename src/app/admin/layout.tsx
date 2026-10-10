@@ -13,15 +13,12 @@ const NAV: (NavItem & { role?: AppRole })[] = [
   { href: "/admin", label: "Resumen del día", group: "Operación" },
   { href: "/admin/cronometraje", label: "Cronometraje", group: "Operación", role: "timer" },
   { href: "/admin/cronometraje/registros", label: "Registros y correcciones", group: "Operación", role: "timer" },
-  { href: "/admin/cronometraje/importar", label: "Importar tiempos", group: "Operación", role: "timer" },
   { href: "/admin/resultados", label: "Resultados", group: "Operación", role: "organizer" },
   { href: "/admin/participantes", label: "Corredores", group: "Corredores", role: "organizer" },
   { href: "/admin/participantes/importar", label: "Importar corredores", group: "Corredores", role: "organizer" },
   { href: "/admin/carrera", label: "Carrera y distancias", group: "Configuración", role: "organizer" },
   { href: "/admin/contenido", label: "Contenido del sitio", group: "Configuración", role: "organizer" },
   { href: "/admin/manual", label: "Manual del corredor", group: "Configuración", role: "organizer" },
-  { href: "/admin/auditoria", label: "Auditoría", group: "Configuración", role: "organizer" },
-  { href: "/admin/equipo", label: "Equipo y permisos", group: "Configuración", role: "admin" },
 ];
 
 const ROLE_LABEL: Record<AppRole, string> = { admin: "Administrador", organizer: "Organizador", timer: "Cronometraje" };

@@ -11,7 +11,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 export const metadata: Metadata = { title: "Manual del corredor" };
 
 export default async function ManualPage() {
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const [sections, schedule, distances, checkpoints] = await Promise.all([
     getSections(race.id, "manual"), getSchedule(race.id), getDistances(race.id), getCheckpoints(race.id),
   ]);

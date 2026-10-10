@@ -63,7 +63,7 @@ export interface ImportContext {
   existing: ExistingEntry[];
 }
 
-export type MatchBy = "external_ref" | "bib" | "name_birth_date";
+export type MatchBy = "external_ref" | "bib" | "name_birth_date" | "name_email";
 
 export interface PreviewRow {
   line: number;
@@ -221,6 +221,10 @@ export function previewParticipants(sheet: Cell[][], ctx: ImportContext): Partic
     } else if (data.birth_date) {
       const e = (byPerson.get(personKey(data.first_name, data.last_name)) ?? []).find((x) => x.birth_date === data.birth_date);
       if (e) match = { participant_id: e.participant_id, by: "name_birth_date", name: name(e) };
+    }
+    if (!match && data.email) {
+      const e = (byPerson.get(personKey(data.first_name, data.last_name)) ?? []).find((x) => x.email?.toLowerCase() === data.email.toLowerCase());
+      if (e) match = { participant_id: e.participant_id, by: "name_email", name: name(e) };
     }
     if (!match && byPerson.has(personKey(data.first_name, data.last_name))) {
       issues.push({ level: "warning", message: "Posible duplicado: ya existe un corredor con el mismo nombre" });

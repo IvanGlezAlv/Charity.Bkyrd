@@ -391,6 +391,16 @@ d("timing and results", () => {
       ).rejects.toThrow(/Not authorized/);
     });
 
+    it("re-importing the same list without bibs matches people by name and email", async () => {
+      const race = await createRace(db, { format: "backyard", runners: [] });
+      const rows = [{ first_name: "Sin", last_name: "Dorsal", email: "SIN@example.com", distance_slug: "main" }];
+      const run = () => asUser(db, organizer, async (q) =>
+        (await q("select public.import_participants($1, $2::jsonb, 'create_only') as r", [race.raceId, JSON.stringify(rows)])).rows[0].r, { commit: true });
+      expect(await run()).toEqual({ created: 1, updated: 0, skipped: 0 });
+      rows[0].email = "sin@example.com";
+      expect(await run()).toEqual({ created: 0, updated: 0, skipped: 1 });
+    });
+
     it("keeps the file order as sign-up order", async () => {
       const race = await createRace(db, { format: "backyard", runners: [] });
       const names = ["Zeta", "Alfa", "Mu", "Beta"];

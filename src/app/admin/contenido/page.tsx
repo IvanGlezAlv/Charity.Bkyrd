@@ -11,7 +11,8 @@ const KEYS = ["announcements", "home-sections", "info-sections", "schedule", "fa
 
 export default async function ContentPage(props: PageProps<"/admin/contenido">) {
   await requirePageRole("organizer");
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const sp = await props.searchParams;
   const current = typeof sp.seccion === "string" && KEYS.includes(sp.seccion) ? sp.seccion : "announcements";
   return (

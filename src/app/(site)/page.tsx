@@ -13,7 +13,8 @@ import { Announcements } from "@/components/site/Announcements";
 import { QuickLinks } from "@/components/site/QuickLinks";
 
 export default async function HomePage() {
-  const race = (await getActiveRace())!;
+  const race = await getActiveRace();
+  if (!race) return null; // the layout shows setup instructions instead
   const [distances, announcements, schedule, sections, sponsors, podcast] = await Promise.all([
     getDistances(race.id),
     getAnnouncements(race.id),

@@ -792,7 +792,7 @@ $$;
 -- Participant import: applied atomically after the app has shown a preview.
 -- p_strategy: 'create_only'      new runners are added, matches are skipped
 --             'update_existing'  matches are updated with the non-empty fields
--- Matching order: external_ref, then bib, then first+last name+birth date.
+-- Matching order: external_ref, then bib, then name + birth date, then name + email.
 -- ---------------------------------------------------------------------------
 create or replace function public.import_participants(
   p_race_id uuid,
@@ -862,6 +862,14 @@ begin
         and lower(p.first_name) = lower(trim(v_row ->> 'first_name'))
         and lower(p.last_name) = lower(trim(coalesce(v_row ->> 'last_name', '')))
         and p.birth_date = (v_row ->> 'birth_date')::date
+      limit 1;
+    end if;
+    if v_participant_id is null and nullif(v_row ->> 'email', '') is not null then
+      select p.id into v_participant_id from public.participants p
+      where p.race_id = p_race_id
+        and lower(p.first_name) = lower(trim(v_row ->> 'first_name'))
+        and lower(p.last_name) = lower(trim(coalesce(v_row ->> 'last_name', '')))
+        and lower(p.email) = lower(trim(v_row ->> 'email'))
       limit 1;
     end if;
 
