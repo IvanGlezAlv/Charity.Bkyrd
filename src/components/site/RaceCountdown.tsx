@@ -35,9 +35,9 @@ export function RaceCountdown({ startIso, intervalMinutes }: { startIso: string;
         <p className="eyebrow mb-2">Faltan para la salida</p>
         <dl className="grid grid-cols-4 border-2 border-ink" role="timer" aria-label={`Faltan ${parts.days} días, ${parts.hours} horas y ${parts.minutes} minutos`}>
           {UNITS.map(([key, label]) => (
-            <div key={key} className="border-l-2 border-ink p-3 first:border-l-0 sm:p-4">
-              <dd className="display text-5xl tabular sm:text-7xl">{String(parts[key]).padStart(2, "0")}</dd>
-              <dt className="eyebrow mt-1 text-ink-2">{label}</dt>
+            <div key={key} className="border-l-2 border-ink px-1.5 py-2 first:border-l-0 sm:p-4">
+              <dd className="display text-3xl tabular sm:text-6xl lg:text-7xl">{String(parts[key]).padStart(2, "0")}</dd>
+              <dt className="eyebrow mt-1 text-[0.6rem] text-ink-2 sm:text-xs">{label}</dt>
             </div>
           ))}
         </dl>
