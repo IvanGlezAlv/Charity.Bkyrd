@@ -136,3 +136,21 @@ export function yardAt(now: number, startIso: string, intervalMinutes: number): 
   const nextStart = yardStart + interval;
   return { started: true, yard, yardStart, nextStart, msToNext: nextStart - now };
 }
+
+export interface CountdownParts {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+/** Whole days, hours, minutes and seconds left until `target`; all zero once it has passed. */
+export function countdownParts(now: number, target: number): CountdownParts {
+  const total = Math.max(0, Math.floor((target - now) / 1000));
+  return {
+    days: Math.floor(total / 86_400),
+    hours: Math.floor((total % 86_400) / 3600),
+    minutes: Math.floor((total % 3600) / 60),
+    seconds: total % 60,
+  };
+}

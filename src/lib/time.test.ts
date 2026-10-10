@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatElapsed, fromLocalInputValue, toLocalInputValue, yardAt, zonedLocalToUtc } from "./time";
+import { countdownParts, formatElapsed, fromLocalInputValue, toLocalInputValue, yardAt, zonedLocalToUtc } from "./time";
 
 describe("zonedLocalToUtc", () => {
   it("converts Hermosillo wall clock (UTC-7, no DST)", () => {
@@ -49,5 +49,24 @@ describe("yardAt", () => {
     expect(yardAt(t0 + 3_599_999, start, 60).yard).toBe(1);
     expect(yardAt(t0 + 3_600_000, start, 60).yard).toBe(2);
     expect(yardAt(t0 + 90 * 60_000, start, 60)).toMatchObject({ yard: 2, msToNext: 30 * 60_000 });
+  });
+});
+
+describe("countdownParts", () => {
+  const start = Date.parse("2026-11-28T23:00:00Z"); // 4:00 PM in Hermosillo
+
+  it("splits the time left into days, hours, minutes and seconds", () => {
+    const now = start - (2 * 86_400 + 3 * 3600 + 4 * 60 + 5) * 1000;
+    expect(countdownParts(now, start)).toEqual({ days: 2, hours: 3, minutes: 4, seconds: 5 });
+  });
+
+  it("rounds partial seconds down", () => {
+    expect(countdownParts(start - 1500, start)).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 1 });
+  });
+
+  it("is all zero at and after the start", () => {
+    const zero = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    expect(countdownParts(start, start)).toEqual(zero);
+    expect(countdownParts(start + 60_000, start)).toEqual(zero);
   });
 });
