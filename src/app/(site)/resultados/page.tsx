@@ -17,7 +17,7 @@ export default async function ResultsPage() {
       <p className="eyebrow">Resultados</p>
       <h1 className="display mt-2 mb-8 text-6xl sm:text-8xl">{race.format === "backyard" ? "Last one standing." : "Clasificación."}</h1>
       {race.results_publication === "hidden" ? (
-        <EmptyState title="Resultados aún no disponibles" image="/brand/ep05-la-resistencia.webp">
+        <EmptyState title="Resultados aún no disponibles" image="/brand/respect-my-authority.webp" imageClassName="h-40 sm:h-52">
           Los resultados en vivo se publicarán aquí el día de la carrera.
         </EmptyState>
       ) : (

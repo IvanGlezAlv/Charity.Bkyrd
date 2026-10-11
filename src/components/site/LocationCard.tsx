@@ -8,7 +8,15 @@ export function LocationCard({ location }: { location: Location }) {
     <article className="flex flex-col gap-3 border-2 border-ink p-4">
       <header>
         <p className="eyebrow text-ink-2">{LOCATION_LABEL[location.kind]}</p>
-        <h3 className="text-xl font-bold">{location.name}</h3>
+        <h3 className="text-xl font-bold">
+          {links ? (
+            <a href={links.google} target="_blank" rel="noopener noreferrer" className="underline decoration-2 underline-offset-4 hover:text-ink-2">
+              {location.name} ↗
+            </a>
+          ) : (
+            location.name
+          )}
+        </h3>
       </header>
       {location.address && <p>{location.address}</p>}
       {location.description && <p className="text-ink-2">{location.description}</p>}

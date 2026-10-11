@@ -72,22 +72,23 @@ export default async function CoursePage(props: PageProps<"/recorrido/[slug]">) 
         )}
       </dl>
 
-      <div className="mt-8">
-        <RaceMap markers={markers} route={d.route_geojson?.coordinates} height={480} label={`Mapa del recorrido ${d.name}`} />
-        {d.gpx_stats && (
-          <p className="eyebrow mt-2 text-ink-3">
-            Trazado del archivo GPX: {d.gpx_stats.distance_km} km medidos · {d.gpx_stats.points.toLocaleString("es-MX")} puntos
-            {d.gpx_stats.has_elevation && d.gpx_stats.min_ele_m != null ? ` · altitud ${d.gpx_stats.min_ele_m}–${d.gpx_stats.max_ele_m} m` : ""}
-          </p>
+      <div className={`mt-8 grid items-start gap-6 ${routeImage ? "md:grid-cols-[1fr_18rem] lg:grid-cols-[1fr_20rem]" : ""}`}>
+        <div>
+          <RaceMap markers={markers} route={d.route_geojson?.coordinates} height={420} label={`Mapa del recorrido ${d.name}`} />
+          {d.gpx_stats && (
+            <p className="eyebrow mt-2 text-ink-3">
+              Trazado del archivo GPX: {d.gpx_stats.distance_km} km medidos · {d.gpx_stats.points.toLocaleString("es-MX")} puntos
+              {d.gpx_stats.has_elevation && d.gpx_stats.min_ele_m != null ? ` · altitud ${d.gpx_stats.min_ele_m}–${d.gpx_stats.max_ele_m} m` : ""}
+            </p>
+          )}
+        </div>
+        {routeImage && (
+          <figure>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={routeImage} alt={`Ruta ${d.name}`} className="w-full border-2 border-ink" loading="lazy" />
+          </figure>
         )}
       </div>
-
-      {routeImage && (
-        <figure className="mt-10 max-w-md">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={routeImage} alt={`Ruta ${d.name}`} className="w-full border-2 border-ink" loading="lazy" />
-        </figure>
-      )}
 
       {d.elevation_profile && d.elevation_profile.length > 1 && (
         <Section title="Perfil" className="mt-10">
