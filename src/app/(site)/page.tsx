@@ -31,7 +31,9 @@ export default async function HomePage() {
   const live = liveAnnouncements(announcements);
   const showResults = race.results_publication !== "hidden";
   const results = showResults ? (await getPublicResults(race.id)).rows : [];
-  const hero = storageUrl(race.hero_image_path) ?? "/brand/las-riberas-landscape.webp";
+  const customHero = storageUrl(race.hero_image_path);
+  // The default landscape already has "@ Las Riberas" lettered on it, so it is shown whole and without the text overlay.
+  const hero = customHero ?? "/brand/las-riberas-landscape.webp";
   const visibleSponsors = sponsors.filter((s) => s.is_published);
   const episodes = podcast.filter((p) => p.is_published);
 
@@ -70,8 +72,12 @@ export default async function HomePage() {
 
       <div className="relative border-y-2 border-ink">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={hero} alt={race.venue_name ? `Paisaje de ${race.venue_name}` : "Paisaje de la sede"} className="h-[42vh] min-h-64 w-full object-cover grayscale" />
-        {race.venue_name && (
+        <img
+          src={hero}
+          alt={race.venue_name ? `Paisaje de ${race.venue_name}` : "Paisaje de la sede"}
+          className={customHero ? "h-[42vh] min-h-64 w-full object-cover grayscale" : "block h-auto w-full grayscale"}
+        />
+        {customHero && race.venue_name && (
           <p className="absolute inset-x-0 bottom-6 text-center font-mono text-3xl uppercase tracking-wide text-ink sm:text-5xl">
             <span className="bg-paper/85 px-3">@ {race.venue_name}</span>
           </p>
