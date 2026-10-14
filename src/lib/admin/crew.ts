@@ -16,7 +16,8 @@ export async function loadCrewGuests(supabase: Client, raceId: string): Promise<
   const { data, error } = await supabase
     .from("crew_guests")
     .select("full_name, position, submitted_at, registrations(bib, participants(first_name, last_name))")
-    .eq("race_id", raceId);
+    .eq("race_id", raceId)
+    .eq("active", true);
   if (error) throw error;
   type Row = { full_name: string; position: number; submitted_at: string; registrations: { bib: string | null; participants: { first_name: string; last_name: string } } };
   return ((data ?? []) as unknown as Row[])

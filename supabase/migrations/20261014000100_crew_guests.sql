@@ -7,6 +7,9 @@ create table public.crew_guests (
   registration_id uuid not null,
   full_name text not null check (length(trim(full_name)) between 2 and 120),
   position smallint not null,
+  -- A resubmission overwrites positions in place and switches off the rest,
+  -- so no guest row is ever deleted.
+  active boolean not null default true,
   submitted_at timestamptz not null default now(),
   unique (registration_id, position),
   foreign key (race_id, registration_id) references public.registrations (race_id, id) on delete cascade
@@ -84,9 +87,11 @@ begin
   end if;
 
   perform set_config('app.audit_reason', 'Lista de invitados enviada desde /invitados', true);
-  delete from public.crew_guests where registration_id = v_reg;
+  update public.crew_guests set active = false where registration_id = v_reg and active;
   insert into public.crew_guests (race_id, registration_id, full_name, position)
-  select p_race_id, v_reg, g, o from unnest(v_guests) with ordinality as t(g, o);
+  select p_race_id, v_reg, g, o from unnest(v_guests) with ordinality as t(g, o)
+  on conflict (registration_id, position)
+  do update set full_name = excluded.full_name, active = true, submitted_at = now();
 
   return cardinality(v_guests);
 end;
