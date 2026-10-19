@@ -17,6 +17,7 @@ const NAV: (NavItem & { role?: AppRole })[] = [
   { href: "/admin/participantes", label: "Corredores", group: "Corredores", role: "organizer" },
   { href: "/admin/participantes/importar", label: "Importar corredores", group: "Corredores", role: "organizer" },
   { href: "/admin/invitados", label: "Invitados / crew", group: "Corredores", role: "organizer" },
+  { href: "/admin/perfiles", label: "Perfiles para la transmisión", group: "Corredores", role: "organizer" },
   { href: "/admin/carrera", label: "Carrera y distancias", group: "Configuración", role: "organizer" },
   { href: "/admin/contenido", label: "Contenido del sitio", group: "Configuración", role: "organizer" },
   { href: "/admin/manual", label: "Manual del corredor", group: "Configuración", role: "organizer" },

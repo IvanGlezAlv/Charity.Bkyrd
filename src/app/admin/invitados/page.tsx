@@ -1,7 +1,7 @@
 import { requirePageRole } from "@/lib/auth";
 import { getActiveRace } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
-import { loadCrewGuests } from "@/lib/admin/crew";
+import { loadCrewCars, loadCrewGuests } from "@/lib/admin/crew";
 import { loadEntries } from "@/lib/admin/participants";
 import { formatDateTime } from "@/lib/time";
 import { AdminPage, PageHeader } from "@/components/admin/PageHeader";
@@ -14,13 +14,14 @@ export default async function CrewGuestsPage() {
   const race = await getActiveRace();
   if (!race) return null; // the layout shows setup instructions instead
   const supabase = await createClient();
-  const [guests, entries] = await Promise.all([loadCrewGuests(supabase, race.id), loadEntries(supabase, race.id)]);
+  const [guests, cars, entries] = await Promise.all([loadCrewGuests(supabase, race.id), loadCrewCars(supabase, race.id), loadEntries(supabase, race.id)]);
 
   const byRunner = new Map<string, typeof guests>();
   for (const g of guests) {
-    const k = `${g.bib ?? ""}|${g.runner}`;
+    const k = g.registration_id;
     byRunner.set(k, [...(byRunner.get(k) ?? []), g]);
   }
+  const totalCars = [...byRunner.keys()].reduce((n, id) => n + (cars.get(id)?.cars ?? 0), 0);
   const submittedBibs = new Set(guests.map((g) => g.bib));
   const pending = entries
     .filter((e) => e.bib && e.public_listing && !submittedBibs.has(e.bib))
@@ -30,7 +31,7 @@ export default async function CrewGuestsPage() {
     <AdminPage>
       <PageHeader
         title="Invitados"
-        description={<>{guests.length} invitados de {byRunner.size} corredores · {pending.length} corredores sin enviar lista. Los corredores registran a su crew en <a className="underline" href="/invitados">/invitados</a>.</>}
+        description={<>{guests.length} invitados y {totalCars} autos de {byRunner.size} corredores · {pending.length} corredores sin enviar lista. Los corredores registran a su crew en <a className="underline" href="/invitados">/invitados</a>.</>}
         actions={guests.length > 0 ? <a className="btn" href="/api/export/invitados">Exportar a Excel (CSV)</a> : undefined}
       />
 
@@ -44,15 +45,20 @@ export default async function CrewGuestsPage() {
                 <th className="px-2 py-2">Dorsal</th>
                 <th className="px-2 py-2">Corredor</th>
                 <th className="px-2 py-2">Invitados</th>
+                <th className="px-2 py-2">Autos</th>
                 <th className="px-2 py-2">Enviado</th>
               </tr>
             </thead>
             <tbody>
               {[...byRunner.values()].map((list) => (
-                <tr key={`${list[0].bib}|${list[0].runner}`} className="border-b border-ink/20 align-top">
+                <tr key={list[0].registration_id} className="border-b border-ink/20 align-top">
                   <td className="px-2 py-2 font-mono">{list[0].bib}</td>
                   <td className="px-2 py-2">{list[0].runner}</td>
                   <td className="px-2 py-2"><ol className="list-decimal pl-5">{list.map((g) => <li key={g.position}>{g.guest}</li>)}</ol></td>
+                  <td className="px-2 py-2">
+                    {cars.get(list[0].registration_id)?.cars ?? "—"}
+                    {cars.get(list[0].registration_id)?.plates && <span className="block text-xs text-ink-2">{cars.get(list[0].registration_id)?.plates}</span>}
+                  </td>
                   <td className="px-2 py-2 whitespace-nowrap text-ink-2">{formatDateTime(list[0].submitted_at, race.timezone)}</td>
                 </tr>
               ))}

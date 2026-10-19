@@ -2,7 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { type ActionState, initialState } from "@/lib/admin/action-state";
-import { type CrewFormValues, MAX_GUESTS } from "@/lib/crew";
+import { actionStateKey } from "@/lib/action-key";
+import { type CrewFormValues, MAX_CARS, MAX_GUESTS } from "@/lib/crew";
 import { Feedback } from "@/components/admin/Feedback";
 import { submitCrewGuests } from "./actions";
 
@@ -10,21 +11,13 @@ export function CrewForm() {
   const [state, run, pending] = useActionState(submitCrewGuests, initialState);
   return (
     <form action={run} className="space-y-6">
-      {/* React resets the form after each submit; remounting with the echoed values keeps what was typed when there is an error. */}
-      <Fields key={submissions(state)} state={state} />
+      <Fields key={actionStateKey(state)} state={state} />
       <div className="flex flex-wrap items-center gap-3">
         <button className="btn" disabled={pending}>{pending ? "Enviando…" : "Enviar lista"}</button>
         <Feedback state={state} />
       </div>
     </form>
   );
-}
-
-const seen = new WeakMap<ActionState, number>();
-let counter = 0;
-function submissions(state: ActionState) {
-  if (!seen.has(state)) seen.set(state, counter++);
-  return seen.get(state);
 }
 
 function Fields({ state }: { state: ActionState }) {
@@ -67,6 +60,21 @@ function Fields({ state }: { state: ActionState }) {
           <button type="button" className="btn btn-ghost mt-3" onClick={() => { setRows([...rows, { key: next, value: "" }]); setNext(next + 1); }}>+ Agregar invitado</button>
         )}
       </fieldset>
+
+      <div>
+        <p className="text-sm text-ink-2">¿Cuántos autos entrarán a Las Riberas con tu crew? Pon 0 si nadie lleva auto.</p>
+        <div className="mt-3 grid gap-4 sm:grid-cols-[10rem_1fr]">
+          <label className="block">
+            <span className="eyebrow">Autos</span>
+            <input name="cars" type="number" min={0} max={MAX_CARS} step={1} defaultValue={values?.cars} inputMode="numeric" placeholder="1" className="field mt-1" aria-invalid={Boolean(err.cars) || undefined} required />
+            {err.cars && <span className="mt-1 block text-sm text-signal">{err.cars}</span>}
+          </label>
+          <label className="block">
+            <span className="eyebrow">Placas (opcional)</span>
+            <input name="plates" defaultValue={values?.plates} maxLength={300} autoComplete="off" placeholder="ABC-123-A, XYZ-98-76" className="field mt-1" />
+          </label>
+        </div>
+      </div>
     </>
   );
 }
