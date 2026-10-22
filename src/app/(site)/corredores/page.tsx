@@ -40,6 +40,10 @@ export default async function EntrantsPage(props: PageProps<"/corredores">) {
     <Container className="pt-10">
       <p className="eyebrow">Corredores</p>
       <h1 className="display mt-2 text-6xl sm:text-8xl">Lista de salida.</h1>
+      <nav aria-label="Trámites para corredores" className="mt-6 flex flex-wrap gap-3">
+        <Link href="/invitados" className="btn min-h-12 px-5">Registrar invitados / crew →</Link>
+        <Link href="/perfil" className="btn min-h-12 px-5">Perfil de corredor →</Link>
+      </nav>
       <form className="mt-8 flex max-w-xl gap-2" role="search">
         <label className="flex-1">
           <span className="sr-only">Nombre o dorsal</span>
