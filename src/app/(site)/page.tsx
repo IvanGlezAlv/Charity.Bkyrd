@@ -12,6 +12,7 @@ import { Markdown } from "@/components/ui/Markdown";
 import { Announcements } from "@/components/site/Announcements";
 import { QuickLinks } from "@/components/site/QuickLinks";
 import { RaceCountdown } from "@/components/site/RaceCountdown";
+import { ScheduleList } from "@/components/site/ScheduleList";
 
 export default async function HomePage() {
   const race = await getActiveRace();
@@ -147,21 +148,8 @@ export default async function HomePage() {
         )}
 
         {schedule.length > 0 && (
-          <Section title="Programa" eyebrow={race.event_date ? formatDate(race.event_date, race.timezone) : undefined}>
-            <ol className="border-t border-ink">
-              {schedule.map((s) => (
-                <li key={s.id} className="grid grid-cols-[5.5rem_1fr] gap-4 border-b border-line py-3 sm:grid-cols-[8rem_1fr]">
-                  <time className="font-mono text-lg tabular" dateTime={s.starts_at}>
-                    {formatTime(s.starts_at, race.timezone)}
-                    {s.ends_at && <span className="text-ink-3">–{formatTime(s.ends_at, race.timezone)}</span>}
-                  </time>
-                  <div>
-                    <p className="font-bold">{s.title}</p>
-                    {s.description && <p className="text-ink-2">{s.description}</p>}
-                  </div>
-                </li>
-              ))}
-            </ol>
+          <Section title="Programa">
+            <ScheduleList items={schedule} timezone={race.timezone} />
             <Link href="/info#programa" className="btn btn-ghost mt-6">Programa completo</Link>
           </Section>
         )}

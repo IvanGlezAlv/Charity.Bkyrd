@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countdownParts, formatElapsed, fromLocalInputValue, toLocalInputValue, yardAt, zonedLocalToUtc } from "./time";
+import { countdownParts, formatDay, formatElapsed, fromLocalInputValue, toLocalInputValue, yardAt, zonedLocalToUtc } from "./time";
 
 describe("zonedLocalToUtc", () => {
   it("converts Hermosillo wall clock (UTC-7, no DST)", () => {
@@ -68,5 +68,13 @@ describe("countdownParts", () => {
     const zero = { days: 0, hours: 0, minutes: 0, seconds: 0 };
     expect(countdownParts(start, start)).toEqual(zero);
     expect(countdownParts(start + 60_000, start)).toEqual(zero);
+  });
+});
+
+describe("formatDay", () => {
+  it("gives a short Spanish day label in the race timezone", () => {
+    expect(formatDay("2026-11-21T16:00:00Z", "America/Hermosillo")).toBe("sáb 21 nov");
+    // 23:30 local on Friday is already Saturday in UTC.
+    expect(formatDay("2026-11-28T06:30:00Z", "America/Hermosillo")).toBe("vie 27 nov");
   });
 });

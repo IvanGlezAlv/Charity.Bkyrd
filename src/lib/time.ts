@@ -97,6 +97,14 @@ export function formatDate(isoOrDate: string | null | undefined, tz: string, sty
   return new Intl.DateTimeFormat(LOCALE, { timeZone: tz, dateStyle: style }).format(new Date(isoOrDate));
 }
 
+/** Short day label such as "sáb 21 nov", in the race's timezone. */
+export function formatDay(iso: string | null | undefined, tz: string): string {
+  if (!iso) return "";
+  const parts = new Intl.DateTimeFormat(LOCALE, { timeZone: tz, weekday: "short", day: "numeric", month: "short" }).formatToParts(new Date(iso));
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value.replace(/\./g, "") ?? "";
+  return `${part("weekday")} ${part("day")} ${part("month")}`;
+}
+
 /** H:MM:SS, truncated to whole seconds (matches the ranking precision). */
 export function formatElapsed(ms: number | null | undefined): string {
   if (ms == null || !Number.isFinite(ms) || ms < 0) return "";

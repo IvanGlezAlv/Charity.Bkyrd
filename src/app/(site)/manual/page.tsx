@@ -5,6 +5,7 @@ import { storageUrl } from "@/lib/env";
 import { distanceSummary } from "@/lib/race";
 import { formatDate, formatTime } from "@/lib/time";
 import { Container } from "@/components/ui/Section";
+import { ScheduleList } from "@/components/site/ScheduleList";
 import { Markdown } from "@/components/ui/Markdown";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -77,11 +78,7 @@ export default async function ManualPage() {
             {schedule.length > 0 && (
               <section id="manual-programa" className="scroll-mt-24 border-b border-line pb-8 pt-2">
                 <h2 className="display mb-4 text-4xl sm:text-5xl">Programa</h2>
-                <ul className="prose-race">
-                  {schedule.map((s) => (
-                    <li key={s.id}><strong className="font-mono">{formatTime(s.starts_at, race.timezone)}</strong> · {s.title}{s.description ? `. ${s.description}` : ""}</li>
-                  ))}
-                </ul>
+                <ScheduleList items={schedule} timezone={race.timezone} />
               </section>
             )}
 

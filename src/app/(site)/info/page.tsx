@@ -8,6 +8,7 @@ import { Container, Section } from "@/components/ui/Section";
 import { Markdown } from "@/components/ui/Markdown";
 import { RaceMap, type MapMarker } from "@/components/map/RaceMap";
 import { LocationCard } from "@/components/site/LocationCard";
+import { ScheduleList } from "@/components/site/ScheduleList";
 
 export const metadata: Metadata = { title: "Información" };
 
@@ -78,21 +79,7 @@ export default async function InfoPage() {
 
       {schedule.length > 0 && (
         <Section id="programa" title="Programa">
-          <ol className="border-t border-ink">
-            {schedule.map((s) => (
-              <li key={s.id} className="grid grid-cols-[6rem_1fr] gap-4 border-b border-line py-3 sm:grid-cols-[9rem_1fr]">
-                <time className="font-mono text-lg tabular" dateTime={s.starts_at}>
-                  {formatTime(s.starts_at, race.timezone)}
-                  {s.ends_at && <span className="text-ink-3">–{formatTime(s.ends_at, race.timezone)}</span>}
-                </time>
-                <div>
-                  <p className="font-bold">{s.title}</p>
-                  {s.description && <p className="text-ink-2">{s.description}</p>}
-                  {s.location_id && <p className="eyebrow mt-1 text-ink-3">{locations.find((l) => l.id === s.location_id)?.name}</p>}
-                </div>
-              </li>
-            ))}
-          </ol>
+          <ScheduleList items={schedule} timezone={race.timezone} locations={locations} />
           <p className="eyebrow mt-3 text-ink-3">Horarios en hora local ({race.timezone})</p>
         </Section>
       )}

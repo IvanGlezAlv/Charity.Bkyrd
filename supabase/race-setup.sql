@@ -35,8 +35,16 @@ El objetivo es sencillo: seguir completando vueltas hasta que solo quede un corr
           'Una vuelta de 6.7 km cada hora. Gana quien quede al final.', 0, true)
   returning id into v_dist;
 
-  insert into public.schedule_items (race_id, distance_id, location_id, starts_at, title)
-  values (v_race, v_dist, v_venue, timestamptz '2026-11-28 16:00 America/Hermosillo', 'Primera salida');
+  insert into public.schedule_items (race_id, distance_id, location_id, starts_at, ends_at, title, description) values
+  (v_race, null, null, timestamptz '2026-11-21 09:00 America/Hermosillo', timestamptz '2026-11-21 13:00 America/Hermosillo',
+   'Entrega de kits (dorsal y playera)',
+   'En Café Dos Raíces ([ver en Google Maps](https://maps.app.goo.gl/H3Sg1JLvqY6wpyxe7)). No hay junta informativa: aprovecha para resolver tus dudas aquí, o pregúntale a cualquier staff el día de la carrera.'),
+  (v_race, null, v_venue, timestamptz '2026-11-28 13:00 America/Hermosillo', null,
+   'ABREN LAS PUERTAS DE LAS RIBERAS: CHECK-IN DE CORREDORES Y MONTAJE DE TU BASE', null),
+  (v_race, v_dist, v_venue, timestamptz '2026-11-28 16:00 America/Hermosillo', null,
+   'Día de la carrera: primera salida en Las Riberas', null),
+  (v_race, v_dist, v_venue, timestamptz '2026-11-28 17:00 America/Hermosillo', null,
+   'Nueva salida cada hora en punto, día y noche', 'La carrera sigue hasta que quede un solo corredor.');
 
   insert into public.content_sections (race_id, page, slug, title, body, sort_order) values
   (v_race, 'home', 'como-funciona', 'Cómo funciona',
