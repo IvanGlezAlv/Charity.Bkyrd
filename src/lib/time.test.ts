@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countdownParts, formatDay, formatElapsed, fromLocalInputValue, toLocalInputValue, yardAt, zonedLocalToUtc } from "./time";
+import { countdownParts, formatDay, formatElapsed, formatHour, fromLocalInputValue, toLocalInputValue, yardAt, zonedLocalToUtc } from "./time";
 
 describe("zonedLocalToUtc", () => {
   it("converts Hermosillo wall clock (UTC-7, no DST)", () => {
@@ -68,6 +68,14 @@ describe("countdownParts", () => {
     const zero = { days: 0, hours: 0, minutes: 0, seconds: 0 };
     expect(countdownParts(start, start)).toEqual(zero);
     expect(countdownParts(start + 60_000, start)).toEqual(zero);
+  });
+});
+
+describe("formatHour", () => {
+  it("uses the 12-hour clock of the poster and manual", () => {
+    expect(formatHour("2026-11-28T23:00:00Z", "America/Hermosillo")).toBe("4:00 PM");
+    expect(formatHour("2026-11-21T16:00:00Z", "America/Hermosillo")).toBe("9:00 AM");
+    expect(formatHour("2026-11-29T07:00:00Z", "America/Hermosillo")).toBe("12:00 AM");
   });
 });
 

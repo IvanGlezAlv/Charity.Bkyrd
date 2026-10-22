@@ -87,6 +87,12 @@ export function formatTime(iso: string | null | undefined, tz: string, seconds =
   }).format(new Date(iso));
 }
 
+/** Clock time as runners read it on the poster and the manual: "4:00 PM". */
+export function formatHour(iso: string | null | undefined, tz: string): string {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit", hourCycle: "h12" }).format(new Date(iso));
+}
+
 export function formatDate(isoOrDate: string | null | undefined, tz: string, style: "long" | "full" | "medium" = "long"): string {
   if (!isoOrDate) return "";
   // A bare date (YYYY-MM-DD) is a calendar date, not an instant.

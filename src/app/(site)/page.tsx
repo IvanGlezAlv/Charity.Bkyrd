@@ -6,7 +6,7 @@ import { getPublicResults } from "@/lib/results";
 import { storageUrl } from "@/lib/env";
 import { EVENT_STATUS_LABEL, PARTICIPATION_LABEL, PUBLICATION_LABEL } from "@/lib/labels";
 import { distanceSummary, firstStart } from "@/lib/race";
-import { formatDate, formatElapsed, formatTime } from "@/lib/time";
+import { formatDate, formatElapsed, formatHour } from "@/lib/time";
 import { Container, Section } from "@/components/ui/Section";
 import { Markdown } from "@/components/ui/Markdown";
 import { Announcements } from "@/components/site/Announcements";
@@ -44,7 +44,7 @@ export default async function HomePage() {
       <Container className="pt-8 sm:pt-12">
         <div className="eyebrow flex flex-wrap justify-between gap-2 border-b-2 border-ink pb-3">
           <span>{race.event_date ? formatDate(race.event_date, race.timezone, "full") : "Fecha por confirmar"}</span>
-          {start && <span>Inicio {formatTime(start, race.timezone)} h</span>}
+          {start && <span>Inicio {formatHour(start, race.timezone)}</span>}
           <span className={race.event_status === "race_day" ? "text-signal" : ""}>
             {race.event_status === "race_day" && "● "}
             {EVENT_STATUS_LABEL[race.event_status]}
@@ -139,7 +139,7 @@ export default async function HomePage() {
                   <span>
                     <span className="block text-xl font-bold">{d.name}</span>
                     <span className="eyebrow block opacity-80">{distanceSummary(race, d)}</span>
-                    {d.start_time && <span className="eyebrow block opacity-80">Salida {formatTime(d.start_time, race.timezone)} h</span>}
+                    {d.start_time && <span className="eyebrow block opacity-80">Salida {formatHour(d.start_time, race.timezone)}</span>}
                   </span>
                 </Link>
               ))}

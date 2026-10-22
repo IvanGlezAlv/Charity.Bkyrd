@@ -1,4 +1,4 @@
-import { formatDay, formatTime } from "@/lib/time";
+import { formatDay, formatHour } from "@/lib/time";
 import type { Location, ScheduleItem } from "@/lib/types";
 import { Markdown } from "@/components/ui/Markdown";
 
@@ -11,8 +11,8 @@ export function ScheduleList({ items, timezone, locations }: { items: ScheduleIt
           <p>
             <span className="eyebrow block text-ink-2">{formatDay(s.starts_at, timezone)}</span>
             <time className="font-mono text-lg tabular" dateTime={s.starts_at}>
-              {formatTime(s.starts_at, timezone)}
-              {s.ends_at && <span className="text-ink-3">–{formatTime(s.ends_at, timezone)}</span>}
+              {formatHour(s.starts_at, timezone)}
+              {s.ends_at && <span className="block text-ink-3">a {formatHour(s.ends_at, timezone)}</span>}
             </time>
           </p>
           <div>
