@@ -4,6 +4,7 @@ import { getActiveRace, getDistances } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { entryGaps, filterEntries, loadEntries } from "@/lib/admin/participants";
 import { PARTICIPATION_LABEL } from "@/lib/labels";
+import { compareBibs } from "@/lib/timing/console";
 import type { ParticipationStatus } from "@/lib/types";
 import { AdminPage, PageHeader } from "@/components/admin/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -21,7 +22,7 @@ export default async function ParticipantsPage({ searchParams }: PageProps<"/adm
   const filter = { q: one(sp.q), status: one(sp.estado), distance: one(sp.distancia), missing: one(sp.faltante) };
   const supabase = await createClient();
   const [entries, distances] = await Promise.all([loadEntries(supabase, race.id), getDistances(race.id)]);
-  const shown = filterEntries(entries, filter);
+  const shown = filterEntries(entries, filter).sort((a, b) => compareBibs(a.bib, b.bib) || entries.indexOf(a) - entries.indexOf(b));
   const distanceName = new Map(distances.map((d) => [d.id, d.name]));
   const withoutBib = entries.filter((e) => !e.bib).length;
   const sizes = entries.reduce<Record<string, number>>((acc, e) => {
@@ -76,7 +77,7 @@ export default async function ParticipantsPage({ searchParams }: PageProps<"/adm
             </select>
             <button className="btn">Filtrar</button>
           </form>
-          <p className="mb-2 text-sm text-ink-2">Mostrando {shown.length} de {entries.length}, en orden de inscripción.</p>
+          <p className="mb-2 text-sm text-ink-2">Mostrando {shown.length} de {entries.length}, por número de dorsal. La columna # es el orden de inscripción.</p>
 
           <div className="overflow-x-auto border-y-2 border-ink">
             <table className="w-full text-left text-sm">

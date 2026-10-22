@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getActiveRace } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { PARTICIPATION_LABEL } from "@/lib/labels";
+import { compareBibs } from "@/lib/timing/console";
 import { Container } from "@/components/ui/Section";
 
 export const metadata: Metadata = { title: "Corredores" };
@@ -31,8 +32,9 @@ export default async function EntrantsPage(props: PageProps<"/corredores">) {
       ? query.eq("bib", q.replace(/^#/, ""))
       : query.or(`first_name.ilike.%${safe}%,last_name.ilike.%${safe}%`);
   }
-  const { data, error } = await query.order("last_name").limit(q ? 50 : 500);
-  const entrants = (data ?? []) as Entrant[];
+  const { data, error } = await query.order("bib", { nullsFirst: false }).order("last_name").limit(q ? 50 : 500);
+  // Numeric bib order (so "9" sorts before "10" even without zero padding); runners without a bib go last.
+  const entrants = ((data ?? []) as Entrant[]).sort((a, b) => compareBibs(a.bib, b.bib) || a.last_name.localeCompare(b.last_name, "es"));
 
   return (
     <Container className="pt-10">
