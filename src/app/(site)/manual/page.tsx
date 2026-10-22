@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getActiveRace, getCheckpoints, getDistances, getSchedule, getSections } from "@/lib/data";
 import { storageUrl } from "@/lib/env";
 import { distanceSummary } from "@/lib/race";
-import { formatDate, formatTime } from "@/lib/time";
+import { formatDate, formatHour } from "@/lib/time";
 import { Container } from "@/components/ui/Section";
 import { ScheduleList } from "@/components/site/ScheduleList";
 import { Markdown } from "@/components/ui/Markdown";
@@ -90,7 +90,7 @@ export default async function ManualPage() {
                   return (
                     <div key={d.id} className="mb-6">
                       <h3 className="text-xl font-bold">{d.name}</h3>
-                      <p className="eyebrow text-ink-2">{distanceSummary(race, d)}{d.start_time ? ` · salida ${formatTime(d.start_time, race.timezone)} h` : ""}</p>
+                      <p className="eyebrow text-ink-2">{distanceSummary(race, d)}{d.start_time ? ` · salida ${formatHour(d.start_time, race.timezone)}` : ""}</p>
                       {d.description && <Markdown className="prose-race mt-2">{d.description}</Markdown>}
                       {cps.length > 0 && (
                         <ul className="prose-race mt-2">

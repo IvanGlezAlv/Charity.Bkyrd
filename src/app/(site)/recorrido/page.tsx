@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getActiveRace, getDistances } from "@/lib/data";
 import { storageUrl } from "@/lib/env";
 import { distanceSummary } from "@/lib/race";
-import { formatTime } from "@/lib/time";
+import { formatHour } from "@/lib/time";
 import { Container } from "@/components/ui/Section";
 import { EmptyState } from "@/components/ui/EmptyState";
 
@@ -28,7 +28,7 @@ export default async function CoursesPage() {
             <li key={d.id} className="grid gap-4 py-6 md:grid-cols-[1fr_auto] md:items-center">
               <Link href={`/recorrido/${d.slug}`} className="group">
                 <span className="display block text-5xl group-hover:underline">{d.name}</span>
-                <span className="eyebrow mt-1 block text-ink-2">{distanceSummary(race, d)}{d.start_time ? ` · salida ${formatTime(d.start_time, race.timezone)} h` : ""}</span>
+                <span className="eyebrow mt-1 block text-ink-2">{distanceSummary(race, d)}{d.start_time ? ` · salida ${formatHour(d.start_time, race.timezone)}` : ""}</span>
               </Link>
               <div className="flex flex-wrap gap-2">
                 <Link href={`/recorrido/${d.slug}`} className="btn btn-ghost">Ver mapa</Link>

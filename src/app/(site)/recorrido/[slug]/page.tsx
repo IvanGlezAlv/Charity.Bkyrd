@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getActiveRace, getCheckpoints, getDistances, getLocations } from "@/lib/data";
 import { storageUrl } from "@/lib/env";
 import { LOCATION_LABEL } from "@/lib/labels";
-import { formatTime } from "@/lib/time";
+import { formatHour } from "@/lib/time";
 import { Container, Section } from "@/components/ui/Section";
 import { Markdown } from "@/components/ui/Markdown";
 import { RaceMap, type MapMarker } from "@/components/map/RaceMap";
@@ -66,9 +66,9 @@ export default async function CoursePage(props: PageProps<"/recorrido/[slug]">) 
         <Stat label="Desnivel +" value={d.elevation_gain_m != null ? `${d.elevation_gain_m} m` : d.gpx_stats?.has_elevation ? `${d.gpx_stats.gain_m} m` : "—"} note={d.elevation_gain_m != null ? "Oficial" : d.gpx_stats?.has_elevation ? "Según GPX" : undefined} />
         <Stat label="Desnivel −" value={d.elevation_loss_m != null ? `${d.elevation_loss_m} m` : d.gpx_stats?.has_elevation ? `${d.gpx_stats.loss_m} m` : "—"} note={d.elevation_loss_m != null ? "Oficial" : d.gpx_stats?.has_elevation ? "Según GPX" : undefined} />
         {backyard ? (
-          <Stat label="Tiempo por vuelta" value={`${d.loop_interval_minutes ?? 60} min`} note={d.start_time ? `1ª salida ${formatTime(d.start_time, race.timezone)} h` : undefined} />
+          <Stat label="Tiempo por vuelta" value={`${d.loop_interval_minutes ?? 60} min`} note={d.start_time ? `1ª salida ${formatHour(d.start_time, race.timezone)}` : undefined} />
         ) : (
-          <Stat label="Salida" value={d.start_time ? formatTime(d.start_time, race.timezone) : "—"} note={d.cutoff_minutes ? `Corte ${Math.floor(d.cutoff_minutes / 60)}h${String(d.cutoff_minutes % 60).padStart(2, "0")}` : undefined} />
+          <Stat label="Salida" value={d.start_time ? formatHour(d.start_time, race.timezone) : "—"} note={d.cutoff_minutes ? `Corte ${Math.floor(d.cutoff_minutes / 60)}h${String(d.cutoff_minutes % 60).padStart(2, "0")}` : undefined} />
         )}
       </dl>
 

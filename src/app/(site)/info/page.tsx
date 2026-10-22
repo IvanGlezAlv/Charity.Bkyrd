@@ -3,7 +3,7 @@ import {
   getActiveRace, getCheckpoints, getContacts, getDistances, getFaqs, getLocations, getSchedule, getSections,
 } from "@/lib/data";
 import { LOCATION_LABEL, mapsLinks } from "@/lib/labels";
-import { formatDate, formatTime } from "@/lib/time";
+import { formatDate, formatHour } from "@/lib/time";
 import { Container, Section } from "@/components/ui/Section";
 import { Markdown } from "@/components/ui/Markdown";
 import { RaceMap, type MapMarker } from "@/components/map/RaceMap";
@@ -99,7 +99,7 @@ export default async function InfoPage() {
                 {visibleDistances.map((d) => (
                   <tr key={d.id} className="border-b border-line">
                     <td className="py-3 pr-4 font-bold">{d.name}{d.distance_km ? ` · ${d.distance_km} km` : ""}</td>
-                    <td className="py-3 pr-4 font-mono tabular">{d.start_time ? `${formatTime(d.start_time, race.timezone)} h` : "Por confirmar"}</td>
+                    <td className="py-3 pr-4 font-mono tabular">{d.start_time ? formatHour(d.start_time, race.timezone) : "Por confirmar"}</td>
                     <td className="py-3 pr-4">
                       {race.format === "backyard"
                         ? `${d.loop_interval_minutes ?? 60} min. Nueva salida cada ${d.loop_interval_minutes ?? 60} min.`
@@ -178,7 +178,10 @@ export default async function InfoPage() {
               {c.email && <> · <a className="underline" href={`mailto:${c.email}`}>{c.email}</a></>}
             </li>
           ))}
-          {!race.contact_email && !race.contact_phone && organizers.length === 0 && <li className="text-ink-2">Datos de contacto por publicar.</li>}
+          {race.social_links.map((l) => (
+            <li key={l.url}>{l.label}: <a className="underline" href={l.url} target="_blank" rel="noopener noreferrer">{l.url.replace(/^https?:\/\/(www\.)?instagram\.com\/([^/]+)\/?$/, "@$2")}</a></li>
+          ))}
+          {!race.contact_email && !race.contact_phone && organizers.length === 0 && race.social_links.length === 0 && <li className="text-ink-2">Datos de contacto por publicar.</li>}
         </ul>
       </Section>
     </Container>
