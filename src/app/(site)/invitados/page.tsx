@@ -18,7 +18,7 @@ export default async function InvitadosPage() {
         cada persona que va a entrar y cuántos autos llevarán.
       </p>
       <p className="mt-2 text-sm text-ink-2">
-        Corredores: usen su dorsal y su nombre (¿no sabes tu dorsal? Búscalo en <Link href="/corredores" className="underline">Corredores</Link>).
+        Corredores: usen el dorsal que les entregamos y su nombre; si no coincide con la página de <Link href="/corredores" className="underline">Corredores</Link>, envíenlo igual.
         Si no vas a correr, elige «No soy corredor». Puedes enviar varias listas; todas se suman y ninguna borra a la anterior.
       </p>
       <div className="mt-8 border-t-2 border-ink pt-8">

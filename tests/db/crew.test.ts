@@ -57,12 +57,22 @@ d("guest lists (/invitados)", () => {
     await asUser(db, null, async (q) => {
       expect((await q(SUBMIT, [race.raceId, false, null, "Carla Gómez", "Ana Pérez", ["Diego Gómez"], 1, null])).rows[0].n).toBe(1);
       await expect(q(SUBMIT, [race.raceId, false, null, "C", null, ["Diego Gómez"], 0, null])).rejects.toThrow(/Invalid name/);
-      // Runners still need a matching bib + name.
-      await expect(q(SUBMIT, [race.raceId, true, "12", "Ana", null, ["X Y"], 0, null])).rejects.toThrow(/Bib and name do not match/);
     }, { commit: true });
     const row = await asUser(db, organizer, async (q) => (await q(
       "select registration_id, submitter_name, with_runner from public.crew_submissions where submitter_name = 'Carla Gómez'")).rows[0]);
     expect(row).toEqual({ registration_id: null, submitter_name: "Carla Gómez", with_runner: "Ana Pérez" });
+  });
+
+  it("saves runner lists whose bib + name don't match and flags them", async () => {
+    await asUser(db, null, async (q) => {
+      expect((await q(SUBMIT, [race.raceId, true, "45", "Beto Ruiz", null, ["Mismo Bib"], 1, null])).rows[0].n).toBe(1);
+    }, { commit: true });
+    const row = await asUser(db, organizer, async (q) => (await q(
+      "select registration_id, is_runner, typed_bib, submitter_name from public.crew_submissions where typed_bib = '45'")).rows[0]);
+    expect(row).toEqual({ registration_id: null, is_runner: true, typed_bib: "45", submitter_name: "Beto Ruiz" });
+    const matched = await asUser(db, organizer, async (q) => (await q(
+      "select count(*)::int n from public.crew_submissions where registration_id = $1 and is_runner and typed_bib = '7'", [race.regs["007"]])).rows[0].n);
+    expect(matched).toBe(2);
   });
 
   it("keeps guest lists private and blocks the old overwrite path", async () => {

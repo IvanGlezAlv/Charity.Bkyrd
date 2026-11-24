@@ -12,9 +12,16 @@ export interface CrewGuest {
 
 export interface CrewSubmission {
   id: string;
-  /** Set when a runner submitted; null for people who are not running. */
+  /** Set when bib + name matched a registered runner. */
   registration_id: string | null;
+  /** Submitted as a runner (even if bib + name didn't match). */
+  is_runner: boolean;
+  /** Runner submitted, but bib + name didn't match the registered list. */
+  bib_mismatch: boolean;
+  /** Bib the runner typed. */
   bib: string | null;
+  /** Registered bib and name when matched. */
+  registered: { bib: string | null; name: string } | null;
   /** Registered runner name, or the name the non-runner typed. */
   submitter: string;
   with_runner: string | null;
@@ -33,12 +40,12 @@ export function guestKey(name: string): string {
 export async function loadCrewSubmissions(supabase: Client, raceId: string): Promise<CrewSubmission[]> {
   const { data, error } = await supabase
     .from("crew_submissions")
-    .select("id, registration_id, submitter_name, with_runner, cars, plates, submitted_at, registrations(bib, participants(first_name, last_name)), crew_submission_guests(position, full_name)")
+    .select("id, registration_id, is_runner, typed_bib, submitter_name, with_runner, cars, plates, submitted_at, registrations(bib, participants(first_name, last_name)), crew_submission_guests(position, full_name)")
     .eq("race_id", raceId)
     .order("submitted_at");
   if (error) throw error;
   type Row = {
-    id: string; registration_id: string | null; submitter_name: string; with_runner: string | null; cars: number | null; plates: string | null; submitted_at: string;
+    id: string; registration_id: string | null; is_runner: boolean; typed_bib: string | null; submitter_name: string; with_runner: string | null; cars: number | null; plates: string | null; submitted_at: string;
     registrations: { bib: string | null; participants: { first_name: string; last_name: string } } | null;
     crew_submission_guests: { position: number; full_name: string }[];
   };
@@ -46,8 +53,13 @@ export async function loadCrewSubmissions(supabase: Client, raceId: string): Pro
   return ((data ?? []) as unknown as Row[]).map((r) => ({
     id: r.id,
     registration_id: r.registration_id,
-    bib: r.registrations?.bib ?? null,
-    submitter: r.registrations ? `${r.registrations.participants.first_name} ${r.registrations.participants.last_name}`.trim() : r.submitter_name,
+    is_runner: r.is_runner,
+    bib_mismatch: r.is_runner && !r.registration_id,
+    bib: r.typed_bib,
+    registered: r.registrations
+      ? { bib: r.registrations.bib, name: `${r.registrations.participants.first_name} ${r.registrations.participants.last_name}`.trim() }
+      : null,
+    submitter: r.submitter_name,
     with_runner: r.with_runner,
     cars: r.cars,
     plates: r.plates,
@@ -61,4 +73,4 @@ export async function loadCrewSubmissions(supabase: Client, raceId: string): Pro
   }));
 }
 
-export const CREW_EXPORT_HEADER = ["Invitado", "Repetido", "Tipo", "Dorsal", "Envía", "Acompaña a", "Núm. en la lista", "Autos de la lista", "Placas", "Enviado", "Envío"];
+export const CREW_EXPORT_HEADER = ["Invitado", "Repetido", "Tipo", "Dorsal escrito", "Envía", "Dorsal coincide", "Corredor en la lista", "Acompaña a", "Núm. en la lista", "Autos de la lista", "Placas", "Enviado", "Envío"];

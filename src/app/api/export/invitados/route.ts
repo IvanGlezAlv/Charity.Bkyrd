@@ -19,7 +19,8 @@ export async function GET() {
   const stamp = new Date().toISOString().slice(0, 10);
   const rows = submissions.flatMap((s, i) =>
     s.guests.map((g) => [
-      g.name, g.repeated ? "Sí" : "", s.registration_id ? "Corredor" : "No corredor", s.bib, s.submitter, s.with_runner,
+      g.name, g.repeated ? "Sí" : "", s.is_runner ? "Corredor" : "No corredor", s.bib, s.submitter,
+      s.is_runner ? (s.bib_mismatch ? "No" : "Sí") : "", s.registered ? `${s.registered.bib ?? ""} ${s.registered.name}`.trim() : "", s.with_runner,
       g.position, s.cars, s.plates, formatDateTime(s.submitted_at, race.timezone), i + 1,
     ]),
   );

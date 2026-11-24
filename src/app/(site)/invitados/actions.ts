@@ -3,7 +3,7 @@
 import { getActiveRace } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { type ActionState, friendlyError } from "@/lib/admin/action-state";
-import { type CrewFormValues, MAX_CARS, MAX_GUESTS, RUNNER_MISMATCH } from "@/lib/crew";
+import { type CrewFormValues, MAX_CARS, MAX_GUESTS } from "@/lib/crew";
 
 /**
  * Public: saves a new guest list for the access list at the caseta. Runners
@@ -53,7 +53,6 @@ export async function submitCrewGuests(_prev: ActionState, form: FormData): Prom
 
 function errorMessage(err: unknown): string {
   const msg = (err as { message?: string })?.message ?? "";
-  if (/Bib and name do not match/.test(msg)) return RUNNER_MISMATCH;
   if (/Invalid name/.test(msg)) return "Escribe tu nombre y apellido.";
   if (/Invalid runner name/.test(msg)) return "El nombre del corredor es demasiado largo.";
   if (/Invalid car count/.test(msg)) return `Escribe cuántos autos llevarán (0 a ${MAX_CARS}).`;
