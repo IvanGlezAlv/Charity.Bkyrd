@@ -19,9 +19,10 @@ export default async function CrewGuestsPage() {
   const guestCount = submissions.reduce((n, s) => n + s.guests.length, 0);
   const uniqueCount = submissions.reduce((n, s) => n + s.guests.filter((g) => !g.repeated).length, 0);
   const totalCars = submissions.reduce((n, s) => n + (s.cars ?? 0), 0);
-  const runnerIds = new Set(submissions.map((s) => s.registration_id).filter(Boolean));
+  const runnerIds = new Set(submissions.filter((s) => !s.former_runner).map((s) => s.registration_id).filter(Boolean));
   const nonRunners = submissions.filter((s) => !s.is_runner).length;
   const mismatches = submissions.filter((s) => s.bib_mismatch).length;
+  const former = submissions.filter((s) => s.former_runner).length;
   const pending = entries
     .filter((e) => e.bib && e.public_listing && !runnerIds.has(e.id))
     .sort((a, b) => (a.bib ?? "").localeCompare(b.bib ?? "", "es", { numeric: true }));
@@ -33,7 +34,7 @@ export default async function CrewGuestsPage() {
       <PageHeader
         title="Invitados"
         description={<>
-          {uniqueCount} personas distintas ({guestCount} nombres enviados) y {totalCars} autos en {submissions.length} envíos: {runnerIds.size} corredores identificados, {mismatches} envíos de corredor con dorsal que no coincide y {nonRunners} de no corredores · {pending.length} corredores sin enviar lista.
+          {uniqueCount} personas distintas ({guestCount} nombres enviados) y {totalCars} autos en {submissions.length} envíos: {runnerIds.size} corredores identificados, {mismatches} envíos de corredor con dorsal que no coincide, {former} de corredores que ya no corren y {nonRunners} de no corredores · {pending.length} corredores sin enviar lista.
           Se registran en <a className="underline" href="/invitados">/invitados</a>; cada envío se suma, ninguno borra al anterior.
         </>}
         actions={guestCount > 0 ? <a className="btn" href="/api/export/invitados">Exportar a Excel (CSV)</a> : undefined}
@@ -58,10 +59,12 @@ export default async function CrewGuestsPage() {
                   <td className="px-2 py-2">
                     {s.is_runner
                       ? <>
-                          <span className="font-mono">#{s.bib}</span> {s.submitter}
-                          {s.bib_mismatch
-                            ? <span className="block text-xs font-semibold text-signal">Corredor · el dorsal no coincide con la lista</span>
-                            : <span className="block text-xs text-ink-2">Corredor{s.registered && s.registered.name !== s.submitter ? ` · en la lista: ${s.registered.name}` : ""}</span>}
+                          <span className="font-mono">#{s.registered?.bib ?? s.bib}</span> {s.submitter}
+                          {s.former_runner
+                            ? <span className="block text-xs font-semibold text-signal">Ya no corre{s.bib ? ` · envió con el dorsal ${s.bib}` : ""}</span>
+                            : s.bib_mismatch
+                              ? <span className="block text-xs font-semibold text-signal">Corredor · el dorsal {s.bib} no coincide con la lista</span>
+                              : <span className="block text-xs text-ink-2">Corredor{s.registered && s.registered.name !== s.submitter ? ` · en la lista: ${s.registered.name}` : ""}{s.registered?.bib && s.bib && s.registered.bib !== s.bib ? ` · escribió ${s.bib}` : ""}</span>}
                         </>
                       : <>{s.submitter}<span className="block text-xs text-ink-2">No corredor{s.with_runner ? ` · apoya a ${s.with_runner}` : ""}</span></>}
                   </td>

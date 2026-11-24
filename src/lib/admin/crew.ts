@@ -18,6 +18,8 @@ export interface CrewSubmission {
   is_runner: boolean;
   /** Runner submitted, but bib + name didn't match the registered list. */
   bib_mismatch: boolean;
+  /** Linked runner was taken off the race (bib freed, hidden from the list). */
+  former_runner: boolean;
   /** Bib the runner typed. */
   bib: string | null;
   /** Registered bib and name when matched. */
@@ -40,13 +42,13 @@ export function guestKey(name: string): string {
 export async function loadCrewSubmissions(supabase: Client, raceId: string): Promise<CrewSubmission[]> {
   const { data, error } = await supabase
     .from("crew_submissions")
-    .select("id, registration_id, is_runner, typed_bib, submitter_name, with_runner, cars, plates, submitted_at, registrations(bib, participants(first_name, last_name)), crew_submission_guests(position, full_name)")
+    .select("id, registration_id, is_runner, typed_bib, submitter_name, with_runner, cars, plates, submitted_at, registrations(bib, public_listing, participants(first_name, last_name)), crew_submission_guests(position, full_name)")
     .eq("race_id", raceId)
     .order("submitted_at");
   if (error) throw error;
   type Row = {
     id: string; registration_id: string | null; is_runner: boolean; typed_bib: string | null; submitter_name: string; with_runner: string | null; cars: number | null; plates: string | null; submitted_at: string;
-    registrations: { bib: string | null; participants: { first_name: string; last_name: string } } | null;
+    registrations: { bib: string | null; public_listing: boolean; participants: { first_name: string; last_name: string } } | null;
     crew_submission_guests: { position: number; full_name: string }[];
   };
   const seen = new Set<string>();
@@ -55,6 +57,7 @@ export async function loadCrewSubmissions(supabase: Client, raceId: string): Pro
     registration_id: r.registration_id,
     is_runner: r.is_runner,
     bib_mismatch: r.is_runner && !r.registration_id,
+    former_runner: Boolean(r.registrations && (!r.registrations.bib || !r.registrations.public_listing)),
     bib: r.typed_bib,
     registered: r.registrations
       ? { bib: r.registrations.bib, name: `${r.registrations.participants.first_name} ${r.registrations.participants.last_name}`.trim() }
