@@ -2,7 +2,7 @@
 insert into public.content_sections (race_id, page, slug, title, sort_order, is_published, body) values
 (:'race', 'manual', 'avisos', 'Avisos de la semana de carrera', 10, true, $md$Aquí van las novedades de última hora. Revisa esta sección y nuestro [Instagram](https://www.instagram.com/charitybkyrd/) antes de la carrera.
 
-- **Invitados y autos:** registra a tu crew, tus acompañantes y sus autos en [charitybkyrdultra.vercel.app/invitados](/invitados) para que reciban su QR de entrada (ver [Área de corredores y crew](#area-corredores)).
+- **Invitados y autos:** registra a tu crew, tus acompañantes y sus autos en [charitybkyrdultra.vercel.app/invitados](/invitados) para que estén en la lista de acceso de la caseta de Las Riberas (ver [Área de corredores y crew](#area-corredores)).
 - **Transmisión en vivo:** cuéntanos de ti en [charitybkyrdultra.vercel.app/perfil](/perfil) para que los comentaristas tengan algo que contar durante la carrera. Es opcional.
 - **Cupo:** inscripciones cerradas, cupo lleno (78 corredores).$md$),
 (:'race', 'manual', 'datos-rapidos', 'Datos rápidos', 20, true, $md$| Qué | Dato |
@@ -57,7 +57,7 @@ También ayuda llevar el GPX de la vuelta en tu reloj o celular (ver [Recorrido]
 (:'race', 'manual', 'area-corredores', 'Área de corredores y crew', 60, true, $md$La salida, la meta y el área de corredores están en el mismo lugar, así que pasas por ahí cada hora. Ahí montas tu base: silla, comida, ropa de cambio. Funciona como tu bolsa personal (drop bag) en todas las vueltas.
 
 - **Trae tus propios recursos:** todo lo que necesites para tu base (silla, comida, hidratación, ropa) corre por tu cuenta.
-- **Registro de invitados (obligatorio):** para entrar a Las Riberas, cada invitado (crew, familia, amigos) necesita un código QR. Registra los nombres de todos tus invitados, cuántos autos llevan y sus placas en [charitybkyrdultra.vercel.app/invitados](/invitados) y con eso generamos sus QR. Quien no esté registrado no entra.
+- **Registro de invitados (obligatorio):** para entrar a Las Riberas, cada invitado (crew, familia, amigos) debe estar en la lista de acceso de la caseta. Registra los nombres de todos tus invitados, cuántos autos llevan y sus placas en [charitybkyrdultra.vercel.app/invitados](/invitados); puedes enviar varias listas y quien no corre también puede registrarse. Quien no esté en la lista no entra.
 - **Crew:** tu crew es extensión de ti y sigue las mismas reglas. Su mal comportamiento puede descalificarte.
 - **Pacers:** no hay pacers. Cada vuelta la corres por tu cuenta.
 - **Al final:** llévate todo. Lo que dejes no se guarda ni se envía.$md$),
