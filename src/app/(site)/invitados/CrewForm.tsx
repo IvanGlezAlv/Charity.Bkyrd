@@ -52,7 +52,7 @@ function Fields({ state }: { state: ActionState }) {
         <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
           <label className="block">
             <span className="eyebrow">Dorsal</span>
-            <input name="bib" defaultValue={values?.bib} inputMode="numeric" autoComplete="off" placeholder="007" className="field mt-1" aria-invalid={Boolean(err.bib) || undefined} required />
+            <input name="bib" defaultValue={values?.bib} inputMode="numeric" autoComplete="off" placeholder="007" maxLength={20} className="field mt-1" aria-invalid={Boolean(err.bib) || undefined} required />
             {err.bib && <span className="mt-1 block text-sm text-signal">{err.bib}</span>}
           </label>
           <label className="block">
