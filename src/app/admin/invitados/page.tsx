@@ -1,7 +1,7 @@
 import { requirePageRole } from "@/lib/auth";
 import { getActiveRace } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
-import { loadCrewCars, loadCrewGuests } from "@/lib/admin/crew";
+import { loadCrewSubmissions } from "@/lib/admin/crew";
 import { loadEntries } from "@/lib/admin/participants";
 import { formatDateTime } from "@/lib/time";
 import { AdminPage, PageHeader } from "@/components/admin/PageHeader";
@@ -14,52 +14,61 @@ export default async function CrewGuestsPage() {
   const race = await getActiveRace();
   if (!race) return null; // the layout shows setup instructions instead
   const supabase = await createClient();
-  const [guests, cars, entries] = await Promise.all([loadCrewGuests(supabase, race.id), loadCrewCars(supabase, race.id), loadEntries(supabase, race.id)]);
+  const [submissions, entries] = await Promise.all([loadCrewSubmissions(supabase, race.id), loadEntries(supabase, race.id)]);
 
-  const byRunner = new Map<string, typeof guests>();
-  for (const g of guests) {
-    const k = g.registration_id;
-    byRunner.set(k, [...(byRunner.get(k) ?? []), g]);
-  }
-  const totalCars = [...byRunner.keys()].reduce((n, id) => n + (cars.get(id)?.cars ?? 0), 0);
-  const submittedBibs = new Set(guests.map((g) => g.bib));
+  const guestCount = submissions.reduce((n, s) => n + s.guests.length, 0);
+  const uniqueCount = submissions.reduce((n, s) => n + s.guests.filter((g) => !g.repeated).length, 0);
+  const totalCars = submissions.reduce((n, s) => n + (s.cars ?? 0), 0);
+  const runnerIds = new Set(submissions.map((s) => s.registration_id).filter(Boolean));
+  const nonRunners = submissions.filter((s) => !s.registration_id).length;
   const pending = entries
-    .filter((e) => e.bib && e.public_listing && !submittedBibs.has(e.bib))
+    .filter((e) => e.bib && e.public_listing && !runnerIds.has(e.id))
     .sort((a, b) => (a.bib ?? "").localeCompare(b.bib ?? "", "es", { numeric: true }));
+  // Newest first on screen; the export keeps submission order.
+  const list = [...submissions].reverse();
 
   return (
     <AdminPage>
       <PageHeader
         title="Invitados"
-        description={<>{guests.length} invitados y {totalCars} autos de {byRunner.size} corredores · {pending.length} corredores sin enviar lista. Los corredores registran a su crew en <a className="underline" href="/invitados">/invitados</a>.</>}
-        actions={guests.length > 0 ? <a className="btn" href="/api/export/invitados">Exportar a Excel (CSV)</a> : undefined}
+        description={<>
+          {uniqueCount} personas distintas ({guestCount} nombres enviados) y {totalCars} autos en {submissions.length} envíos: {runnerIds.size} corredores y {nonRunners} envíos de no corredores · {pending.length} corredores sin enviar lista.
+          Se registran en <a className="underline" href="/invitados">/invitados</a>; cada envío se suma, ninguno borra al anterior.
+        </>}
+        actions={guestCount > 0 ? <a className="btn" href="/api/export/invitados">Exportar a Excel (CSV)</a> : undefined}
       />
 
-      {guests.length === 0 ? (
-        <EmptyState title="Aún no hay invitados">Comparte el enlace /invitados con los corredores.</EmptyState>
+      {submissions.length === 0 ? (
+        <EmptyState title="Aún no hay invitados">Comparte el enlace /invitados con los corredores y su gente.</EmptyState>
       ) : (
         <div className="overflow-x-auto border-y-2 border-ink">
           <table className="w-full text-left text-sm">
             <thead className="font-mono text-xs uppercase tracking-wider">
               <tr className="border-b border-ink">
-                <th className="px-2 py-2">Dorsal</th>
-                <th className="px-2 py-2">Corredor</th>
+                <th className="px-2 py-2">Envía</th>
                 <th className="px-2 py-2">Invitados</th>
                 <th className="px-2 py-2">Autos</th>
                 <th className="px-2 py-2">Enviado</th>
               </tr>
             </thead>
             <tbody>
-              {[...byRunner.values()].map((list) => (
-                <tr key={list[0].registration_id} className="border-b border-ink/20 align-top">
-                  <td className="px-2 py-2 font-mono">{list[0].bib}</td>
-                  <td className="px-2 py-2">{list[0].runner}</td>
-                  <td className="px-2 py-2"><ol className="list-decimal pl-5">{list.map((g) => <li key={g.position}>{g.guest}</li>)}</ol></td>
+              {list.map((s) => (
+                <tr key={s.id} className="border-b border-ink/20 align-top">
                   <td className="px-2 py-2">
-                    {cars.get(list[0].registration_id)?.cars ?? "—"}
-                    {cars.get(list[0].registration_id)?.plates && <span className="block text-xs text-ink-2">{cars.get(list[0].registration_id)?.plates}</span>}
+                    {s.registration_id
+                      ? <><span className="font-mono">#{s.bib}</span> {s.submitter}<span className="block text-xs text-ink-2">Corredor</span></>
+                      : <>{s.submitter}<span className="block text-xs text-ink-2">No corredor{s.with_runner ? ` · apoya a ${s.with_runner}` : ""}</span></>}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap text-ink-2">{formatDateTime(list[0].submitted_at, race.timezone)}</td>
+                  <td className="px-2 py-2">
+                    <ol className="list-decimal pl-5">
+                      {s.guests.map((g) => <li key={g.position} className={g.repeated ? "text-ink-3" : undefined}>{g.name}{g.repeated && <span className="ml-1 text-xs">(repetido)</span>}</li>)}
+                    </ol>
+                  </td>
+                  <td className="px-2 py-2">
+                    {s.cars ?? "—"}
+                    {s.plates && <span className="block text-xs text-ink-2">{s.plates}</span>}
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap text-ink-2">{formatDateTime(s.submitted_at, race.timezone)}</td>
                 </tr>
               ))}
             </tbody>

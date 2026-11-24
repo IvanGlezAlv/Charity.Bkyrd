@@ -14,12 +14,12 @@ export default async function InvitadosPage() {
       <p className="eyebrow">Crew e invitados</p>
       <h1 className="display mt-2 text-6xl sm:text-7xl">Registra a tu crew.</h1>
       <p className="mt-4 text-lg">
-        Para entrar a {race.venue_name ?? "la sede"} cada invitado necesita un código QR. Escribe tu dorsal, tu nombre y el nombre completo de
-        cada persona que te acompañará, y cuántos autos llevarán. La organización generará los códigos con esta lista.
+        Para entrar a Las Riberas el día de la carrera, cada persona debe estar en la lista de acceso de la caseta. Escribe el nombre completo de
+        cada persona que va a entrar y cuántos autos llevarán.
       </p>
       <p className="mt-2 text-sm text-ink-2">
-        ¿No sabes tu dorsal? Búscalo en <Link href="/corredores" className="underline">Corredores</Link>. Puedes volver a enviar el formulario
-        para corregir la lista; la nueva reemplaza a la anterior.
+        Corredores: usen su dorsal y su nombre (¿no sabes tu dorsal? Búscalo en <Link href="/corredores" className="underline">Corredores</Link>).
+        Si no vas a correr, elige «No soy corredor». Puedes enviar varias listas; todas se suman y ninguna borra a la anterior.
       </p>
       <div className="mt-8 border-t-2 border-ink pt-8">
         <CrewForm />

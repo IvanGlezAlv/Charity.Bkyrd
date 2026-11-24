@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { type ActionState, initialState } from "@/lib/admin/action-state";
 import { actionStateKey } from "@/lib/action-key";
-import { type CrewFormValues, MAX_CARS, MAX_GUESTS } from "@/lib/crew";
+import { type CrewFormValues, type CrewSubmitter, MAX_CARS, MAX_GUESTS } from "@/lib/crew";
 import { Feedback } from "@/components/admin/Feedback";
 import { submitCrewGuests } from "./actions";
 
@@ -20,30 +20,65 @@ export function CrewForm() {
   );
 }
 
+const KINDS: { value: CrewSubmitter; label: string }[] = [
+  { value: "runner", label: "Soy corredor" },
+  { value: "guest", label: "No soy corredor" },
+];
+
 function Fields({ state }: { state: ActionState }) {
   const values = (state.ok ? undefined : state.data) as CrewFormValues | undefined;
-  const initialGuests = values?.guests.length ? values.guests : ["", ""];
+  const [kind, setKind] = useState<CrewSubmitter>(values?.kind ?? "runner");
+  const initialGuests = values?.guests.length ? values.guests : ["", "", ""];
   const [rows, setRows] = useState(() => initialGuests.map((value, key) => ({ key, value })));
   const [next, setNext] = useState(initialGuests.length);
   const err = state.errors ?? {};
+  const isRunner = kind === "runner";
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
-        <label className="block">
-          <span className="eyebrow">Dorsal</span>
-          <input name="bib" defaultValue={values?.bib} inputMode="numeric" autoComplete="off" placeholder="007" className="field mt-1" aria-invalid={Boolean(err.bib) || undefined} required />
-          {err.bib && <span className="mt-1 block text-sm text-signal">{err.bib}</span>}
-        </label>
-        <label className="block">
-          <span className="eyebrow">Tu nombre (corredor)</span>
-          <input name="runner_name" defaultValue={values?.runner_name} autoComplete="name" placeholder="Nombre y apellido" className="field mt-1" aria-invalid={Boolean(err.runner_name) || undefined} required />
-          {err.runner_name && <span className="mt-1 block text-sm text-signal">{err.runner_name}</span>}
-        </label>
-      </div>
+      <fieldset>
+        <legend className="eyebrow">¿Quién envía la lista?</legend>
+        <div className="mt-2 grid grid-cols-2 border-2 border-ink">
+          {KINDS.map((k) => (
+            <label key={k.value} className={`flex min-h-12 cursor-pointer items-center justify-center px-3 text-center font-mono text-sm uppercase tracking-wider has-[:focus-visible]:outline-2 ${kind === k.value ? "bg-ink text-paper" : ""}`}>
+              <input type="radio" name="kind" value={k.value} checked={kind === k.value} onChange={() => setKind(k.value)} className="sr-only" />
+              {k.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {isRunner ? (
+        <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
+          <label className="block">
+            <span className="eyebrow">Dorsal</span>
+            <input name="bib" defaultValue={values?.bib} inputMode="numeric" autoComplete="off" placeholder="007" className="field mt-1" aria-invalid={Boolean(err.bib) || undefined} required />
+            {err.bib && <span className="mt-1 block text-sm text-signal">{err.bib}</span>}
+          </label>
+          <label className="block">
+            <span className="eyebrow">Tu nombre (corredor)</span>
+            <input name="runner_name" defaultValue={values?.name} autoComplete="name" placeholder="Nombre y apellido" className="field mt-1" aria-invalid={Boolean(err.name) || undefined} required />
+            {err.name && <span className="mt-1 block text-sm text-signal">{err.name}</span>}
+          </label>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block">
+            <span className="eyebrow">Tu nombre</span>
+            <input name="guest_name" defaultValue={values?.name} autoComplete="name" placeholder="Nombre y apellido" maxLength={120} className="field mt-1" aria-invalid={Boolean(err.name) || undefined} required />
+            {err.name && <span className="mt-1 block text-sm text-signal">{err.name}</span>}
+          </label>
+          <label className="block">
+            <span className="eyebrow">¿A qué corredor apoyas? (opcional)</span>
+            <input name="with_runner" defaultValue={values?.with_runner} autoComplete="off" placeholder="Nombre o dorsal" maxLength={120} className="field mt-1" aria-invalid={Boolean(err.with_runner) || undefined} />
+            {err.with_runner && <span className="mt-1 block text-sm text-signal">{err.with_runner}</span>}
+          </label>
+        </div>
+      )}
 
       <fieldset>
-        <legend className="eyebrow">Invitados / crew (nombre completo)</legend>
+        <legend className="eyebrow">Personas que entrarán (nombre completo)</legend>
+        <p className="mt-1 text-sm text-ink-2">{isRunner ? "Tu crew, familia y amigos." : "Inclúyete a ti si también vas a entrar."} Hasta {MAX_GUESTS} por envío.</p>
         <ol className="mt-2 space-y-2">
           {rows.map((row, i) => (
             <li key={row.key} className="flex items-center gap-2">
@@ -57,12 +92,12 @@ function Fields({ state }: { state: ActionState }) {
         </ol>
         {err.guest && <p className="mt-1 text-sm text-signal">{err.guest}</p>}
         {rows.length < MAX_GUESTS && (
-          <button type="button" className="btn btn-ghost mt-3" onClick={() => { setRows([...rows, { key: next, value: "" }]); setNext(next + 1); }}>+ Agregar invitado</button>
+          <button type="button" className="btn btn-ghost mt-3" onClick={() => { setRows([...rows, { key: next, value: "" }]); setNext(next + 1); }}>+ Agregar otra persona</button>
         )}
       </fieldset>
 
       <div>
-        <p className="text-sm text-ink-2">¿Cuántos autos entrarán a Las Riberas con tu crew? Pon 0 si nadie lleva auto.</p>
+        <p className="text-sm text-ink-2">¿Cuántos autos entrarán a Las Riberas con estas personas? Pon 0 si nadie lleva auto.</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-[10rem_1fr]">
           <label className="block">
             <span className="eyebrow">Autos</span>

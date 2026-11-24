@@ -1,12 +1,17 @@
-/** Maximum guests a runner can register on /invitados (also enforced in submit_crew_guests). */
-export const MAX_GUESTS = 15;
+/** Maximum guests per submission on /invitados (also enforced in submit_guest_list). */
+export const MAX_GUESTS = 30;
 
-/** Maximum cars per runner's crew (also enforced in submit_crew). */
+/** Maximum cars per submission (also enforced in submit_guest_list). */
 export const MAX_CARS = 10;
 
+/** Who is sending the list: a runner (verified by bib + name) or someone who is not running. */
+export type CrewSubmitter = "runner" | "guest";
+
 export interface CrewFormValues {
+  kind: CrewSubmitter;
   bib: string;
-  runner_name: string;
+  name: string;
+  with_runner: string;
   guests: string[];
   cars: string;
   plates: string;
